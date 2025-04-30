@@ -12,9 +12,9 @@ from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch, CustomSearch
 
-from AviaxMusic.utils.database import is_on_off
-from AviaxMusic.utils.formatters import time_to_seconds
-from AviaxMusic import LOGGER
+from EsproMusic.utils.database import is_on_off
+from EsproMusic.utils.formatters import time_to_seconds
+from EsproMusic import LOGGER
 from config import  KEY
 
 def cookie_txt_file():
