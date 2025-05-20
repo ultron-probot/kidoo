@@ -10,13 +10,14 @@ load_dotenv()
 API_ID = int(getenv("API_ID"))
 API_HASH = getenv("API_HASH")
 
-KEY = getenv("KEY", "NxGBNexGenBots31bc9e")
-
 # Get your token from @BotFather on Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN")
 
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
+
+API_URL = getenv("API_URL", 'https://api.thequickearn.xyz') #youtube song url
+API_KEY = getenv("API_KEY", "NxGBNexGenBots31bc9e") # youtube song api key, get it from https://t.me/its_deep_ydv
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 600))
 
