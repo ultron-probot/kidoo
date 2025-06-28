@@ -1,6 +1,6 @@
 import asyncio
 import os
-import tim
+import time
 from typing import Union
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Voice
