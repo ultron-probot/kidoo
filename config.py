@@ -16,6 +16,9 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 
+# Vars For API End Pont.
+YTPROXY_URL = getenv("YTPROXY_URL", 'https://tgapi.xbitcode.com') ## E.G https://yt.okflix.
+YT_API_KEY = getenv("YT_API_KEY" , "xbit_000DEMO0006" ) ## get your secret key from Deep
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 600))
 
