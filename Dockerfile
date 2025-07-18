@@ -13,4 +13,4 @@ WORKDIR /app/
 RUN python -m pip install --no-cache-dir --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade --requirement requirements.txt
 
-CMD bash star
+CMD bash start
