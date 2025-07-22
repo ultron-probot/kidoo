@@ -8,10 +8,10 @@ from pyrogram import errors
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
-from LyraMusic import app
-from LyraMusic.logging import LOGGER
-from LyraMusic.utils.database import is_on_off
-from LyraMusic.utils.formatters import time_to_seconds
+from EsproMusic import app
+from EsproMusic.logging import LOGGER
+from EsproMusic.utils.database import is_on_off
+from EsproMusic.utils.formatters import time_to_seconds
 from config import API_URL, API_KEY, DOWNLOADS_DIR
 
 @dataclass
