@@ -16,9 +16,14 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 
-# Vars For API End Pont.
-YTPROXY_URL = getenv("YTPROXY_URL", '') 
-YT_API_KEY = getenv("YT_API_KEY" , "" ) ## get your secret key from Deep
+# API URL - here
+API_URL = getenv("API_URL", "https://tgmusic.fallenapi.fun")
+
+# API KEY - here
+API_KEY = getenv("API_KEY", "ef4e80_qtqagWb9uWwn07HeeUsOFNeTqU2RN_Ej")
+
+# For - downloads
+DOWNLOADS_DIR = "downloads"
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 600))
 
