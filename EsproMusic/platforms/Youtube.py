@@ -11,10 +11,10 @@ from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 
-from AnonXMusic.logging import LOGGER
-from AnonXMusic.platforms._httpx import HttpxClient
-from AnonXMusic.utils.database import is_on_off
-from AnonXMusic.utils.formatters import time_to_seconds
+from EsproMusic.logging import LOGGER
+from EsproMusic.platforms._httpx import HttpxClient
+from EsproMusic.utils.database import is_on_off
+from EsproMusic.utils.formatters import time_to_seconds
 from config import API_URL, API_KEY
 
 class YouTubeUtils:
@@ -51,7 +51,7 @@ class YouTubeUtils:
             LOGGER(__name__).warning("Video ID is None")
             return None
 
-        from AnonXMusic import app
+        from EsproMusic import app
         video_url = f"https://www.youtube.com/watch?v={video_id}"
 
         if re.match("^https?://", video_id):
