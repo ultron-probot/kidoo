@@ -663,3 +663,4 @@ async def slider_queries(client, CallbackQuery, _):
             media=med, reply_markup=InlineKeyboardMarkup(buttons)
         )
 
+
