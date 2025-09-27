@@ -1,13 +1,15 @@
 import time
+import asyncio
 import random
+
 from pyrogram import filters
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from youtubesearchpython import VideosSearch
+from youtubesearchpython.__future__ import VideosSearch
 
 import config
 from EsproMusic import app
-from EsproMusic.misc import boot
+from EsproMusic.misc import _boot_
 from EsproMusic.plugins.sudo.sudoers import sudoers_list
 from EsproMusic.utils.database import (
     add_served_chat,
@@ -19,34 +21,31 @@ from EsproMusic.utils.database import (
 )
 from EsproMusic.utils.decorators.language import LanguageStart
 from EsproMusic.utils.formatters import get_readable_time
-from strings import get_string
+from EsproMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
+from strings import get_string
 
-# 🩷 Random animated reaction emojis
-ANIMATED_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
+# 🎉 Emoji list for animation effect
+START_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
 
-# 🩷 Sticker File ID (इसे अपनी पसंद का Sticker ID से बदल सकते हो)
-STICKER_ID = "CAACAgUAAxkBAAIBQGZz9vNq2tI2SgABtHnlP9m0vwXl_gACbgADwDZPE0Bo7MmlNVcgNgQ"  
+# 🩵 Sticker ID (apna sticker file_id yahan daalo)
+START_STICKER_ID = "CAACAgIAAxkBAAEBH4VjU3X..."  # replace with your sticker file_id
 
-
-# 🧠 Private Start Command
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
 
-    # अगर argument के साथ आया तो (help/sudo/info)
+    # 🔹 Agar /start ke sath argument hai (help, sud, inf)
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
-
         if name[0:4] == "help":
-            keyboard = private_panel(_)
+            keyboard = help_pannel(_)
             return await message.reply_photo(
                 photo=config.START_IMG_URL,
                 caption=_["help_1"].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
             )
-
         if name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
@@ -55,7 +54,6 @@ async def start_pm(client, message: Message, _):
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
             return
-
         if name[0:3] == "inf":
             m = await message.reply_text("🔎")
             query = (str(name)).replace("info_", "", 1)
@@ -70,11 +68,9 @@ async def start_pm(client, message: Message, _):
                 channel = result["channel"]["name"]
                 link = result["link"]
                 published = result["publishedTime"]
-
             searched_text = _["start_6"].format(
                 title, duration, views, published, channellink, channel, app.mention
             )
-
             key = InlineKeyboardMarkup(
                 [
                     [
@@ -90,49 +86,47 @@ async def start_pm(client, message: Message, _):
                 caption=searched_text,
                 reply_markup=key,
             )
-
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
 
-    # 🌟 Normal Start Message Flow
+    # 🔹 Normal /start (no arguments)
     else:
-        # 🩷 Step 1: Sticker भेजो और 2 सेकंड बाद delete करो
-        stk = await message.reply_sticker(STICKER_ID)
-        await asyncio.sleep(2)
-        await stk.delete()
+        # 🩵 Sticker bhejna
+        sticker_msg = await message.reply_sticker(START_STICKER_ID)
+        await asyncio.sleep(2.5)
+        await sticker_msg.delete()
 
-        # 🩷 Step 2: Start Photo + Buttons भेजो
+        # 📝 Start message
         out = private_panel(_)
+        caption_text = _["start_2"].format(message.from_user.mention, app.mention)
         start_msg = await message.reply_photo(
             photo=config.START_IMG_URL,
-            caption=_["start_2"].format(message.from_user.mention, app.mention),
+            caption=caption_text,
             reply_markup=InlineKeyboardMarkup(out),
         )
 
-        # 🩷 Step 3: Random emoji reaction भेजो
-        emoji = random.choice(ANIMATED_EMOJIS)
-        try:
-            await start_msg.react(emoji)
-        except Exception:
-            pass
+        # ✨ Emoji animation (❤️, 🎉, 🔥, 👍)
+        for _ in range(3):
+            await asyncio.sleep(0.5)
+            emoji = random.choice(START_EMOJIS)
+            await start_msg.edit_caption(f"{caption_text} {emoji}")
 
-        # Logging
+        # 📢 Logger
         if await is_on_off(2):
-            await app.send_message(
+            return await app.send_message(
                 chat_id=config.LOGGER_ID,
                 text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
             )
 
 
-# 🧠 Group Start
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
     out = start_panel(_)
-    uptime = int(time.time() - boot)
+    uptime = int(time.time() - _boot_)
     await message.reply_photo(
         photo=config.START_IMG_URL,
         caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
@@ -141,25 +135,21 @@ async def start_gp(client, message: Message, _):
     return await add_served_chat(message.chat.id)
 
 
-# 🧠 Welcome on Add
 @app.on_message(filters.new_chat_members, group=-1)
 async def welcome(client, message: Message):
     for member in message.new_chat_members:
         try:
             language = await get_lang(message.chat.id)
             _ = get_string(language)
-
             if await is_banned_user(member.id):
                 try:
                     await message.chat.ban_member(member.id)
                 except:
                     pass
-
             if member.id == app.id:
                 if message.chat.type != ChatType.SUPERGROUP:
                     await message.reply_text(_["start_4"])
                     return await app.leave_chat(message.chat.id)
-
                 if message.chat.id in await blacklisted_chats():
                     await message.reply_text(
                         _["start_5"].format(
@@ -184,25 +174,46 @@ async def welcome(client, message: Message):
                 )
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
-
         except Exception as ex:
             print(ex)
 
-
-
-# 🔘 Start Panel (Buttons)
 def start_panel(_):
-    return [
-        [InlineKeyboardButton(text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true")],
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true"
+            ),
+        ],
         [
             InlineKeyboardButton(text=_["S_B_2"], url=config.SUPPORT_CHAT),
             InlineKeyboardButton(text=_["S_B_3"], url=config.CHANNEL),
         ],
-        [InlineKeyboardButton(text=_["S_B_4"], callback_data="settings_back_helper")],
-        [InlineKeyboardButton(text=_["S_B_5"], user_id=config.OWNER_ID)],
+        [
+            InlineKeyboardButton(text=_["S_B_4"], callback_data="settings_back_helper"),
+        ],
+        [
+            InlineKeyboardButton(text=_["S_B_5"], user_id=config.OWNER_ID),
+        ],
     ]
+    return buttons
 
 
 def private_panel(_):
-    return start_panel(_)
-
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true"
+            ),
+        ],
+        [
+            InlineKeyboardButton(text=_["S_B_2"], url=config.SUPPORT_CHAT),
+            InlineKeyboardButton(text=_["S_B_3"], url=config.CHANNEL),
+        ],
+        [
+            InlineKeyboardButton(text=_["S_B_4"], callback_data="settings_back_helper"),
+        ],
+        [
+            InlineKeyboardButton(text=_["S_B_5"], user_id=config.OWNER_ID),
+        ],
+    ]
+    return buttons
