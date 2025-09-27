@@ -26,9 +26,8 @@ from strings import get_string
 # 🎉 Emoji list for animation effect
 START_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
 
-# 🩵 Sticker ID (replace with your own)
+# 🩵 Sticker ID
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
-
 
 # 🔘 Private panel buttons
 def private_panel(_):
@@ -51,18 +50,13 @@ def private_panel(_):
     ]
     return buttons
 
-
+# ================= PRIVATE START =================
 @app.on_message(filters.command(["start"]) & filters.private & ~config.BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
 
-    # ✨ Start Sticker bhejna
-    sticker_msg = await message.reply_sticker(START_STICKER_ID)
-    await asyncio.sleep(2.5)
-    await sticker_msg.delete()
-
-    # 📝 Start message with Buttons
+    # 📝 Start message pehle bhejna (sticker se pehle)
     caption_text = _["start_2"].format(message.from_user.mention, app.mention)
     out = private_panel(_)
     start_msg = await message.reply_photo(
@@ -71,11 +65,16 @@ async def start_pm(client, message: Message, _):
         reply_markup=InlineKeyboardMarkup(out),
     )
 
-    # 🎈 Emoji animation under caption
+    # 🎉 Emoji animation under caption
     for _ in range(3):
         await asyncio.sleep(0.5)
         emoji = random.choice(START_EMOJIS)
         await start_msg.edit_caption(f"{caption_text} {emoji}")
+
+    # ✨ Sticker bhejna aur delete karna
+    sticker_msg = await message.reply_sticker(START_STICKER_ID)
+    await asyncio.sleep(2.5)
+    await sticker_msg.delete()
 
     # 📢 Logger
     if await is_on_off(2):
@@ -84,7 +83,7 @@ async def start_pm(client, message: Message, _):
             text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
         )
 
-
+# ================= GROUP START =================
 @app.on_message(filters.command(["start"]) & filters.group & ~config.BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
@@ -107,7 +106,7 @@ async def start_gp(client, message: Message, _):
     )
     await add_served_chat(message.chat.id)
 
-
+# ================= WELCOME NEW MEMBERS =================
 @app.on_message(filters.new_chat_members, group=-1)
 async def welcome(client, message: Message):
     for member in message.new_chat_members:
