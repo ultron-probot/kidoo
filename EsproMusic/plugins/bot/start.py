@@ -99,36 +99,36 @@ async def start_pm(client, message: Message, _):
 
     # ────────── Normal /start ──────────
     else:
-        # 🩵 Sticker first
-        sticker_msg = await message.reply_sticker(START_STICKER_ID)
-        await asyncio.sleep(2)
-        await sticker_msg.delete()
+    # 🩵 Sticker first
+    sticker_msg = await message.reply_sticker(START_STICKER_ID)
+    await asyncio.sleep(2)
+    await sticker_msg.delete()
 
-        # 📌 Main start image + caption + buttons
-        out = private_panel(_)
-        caption_text = _["start_2"].format(message.from_user.mention, app.mention)
-        await message.reply_photo(
-            photo=config.START_IMG_URL,
-            caption=caption_text,
-            reply_markup=InlineKeyboardMarkup(out),
-        )
+    # 📌 Main start image + caption + buttons
+    out = private_panel(_)
+    caption_text = _["start_2"].format(message.from_user.mention, app.mention)
+    await message.reply_photo(
+        photo=config.START_IMG_URL,
+        caption=caption_text,
+        reply_markup=InlineKeyboardMarkup(out),
+    )
 
-        # ✨ React on USER'S /start MESSAGE with animated emoji IDs
-for emoji_id in ANKIT_ANIMATED_EMOJIS:
-    try:
-        await message.react(
-            [ReactionTypeEmoji(emoji_id=emoji_id)]
-        )
-        await asyncio.sleep(0.3)
-    except Exception as e:
-        print(f"Emoji reaction failed: {e}")
-        
-        # 📢 Logger
-        if await is_on_off(2):
-            return await app.send_message(
-                chat_id=config.LOGGER_ID,
-                text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
+    # ✨ React on USER'S /start MESSAGE with animated emoji IDs
+    for emoji_id in ANKIT_ANIMATED_EMOJIS:
+        try:
+            await message.react(
+                [ReactionTypeEmoji(emoji_id=emoji_id)]
             )
+            await asyncio.sleep(0.3)
+        except Exception as e:
+            print(f"Emoji reaction failed: {e}")
+
+    # 📢 Logger
+    if await is_on_off(2):
+        return await app.send_message(
+            chat_id=config.LOGGER_ID,
+            text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
+        )
 
 
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
@@ -185,4 +185,5 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+
 
