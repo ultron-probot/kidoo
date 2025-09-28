@@ -6,6 +6,7 @@ from pyrogram import filters
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtubesearchpython.__future__ import VideosSearch
+from pyrogram.types import ReactionTypeEmoji
 
 import config
 from EsproMusic import app
@@ -113,13 +114,15 @@ async def start_pm(client, message: Message, _):
         )
 
         # ✨ React on USER'S /start MESSAGE with animated emoji IDs
-        for emoji_id in ANKIT_ANIMATED_EMOJIS:
-            try:
-                await message.react(emoji_id)
-                await asyncio.sleep(0.3)
-            except Exception as e:
-                print(f"Emoji reaction failed: {e}")
-
+for emoji_id in ANKIT_ANIMATED_EMOJIS:
+    try:
+        await message.react(
+            [ReactionTypeEmoji(emoji_id=emoji_id)]
+        )
+        await asyncio.sleep(0.3)
+    except Exception as e:
+        print(f"Emoji reaction failed: {e}")
+        
         # 📢 Logger
         if await is_on_off(2):
             return await app.send_message(
@@ -182,3 +185,4 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+
