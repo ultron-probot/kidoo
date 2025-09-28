@@ -25,8 +25,16 @@ from EsproMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
+# 🎉 Animated Emoji IDs for reactions
+ANIMATED_EMOJIS = [
+    "5368324170671202286",  # 🎉
+    "5192443872304980006",  # ❤️
+    "5254878683054006236",  # 🔥
+]
+
 # 🩵 Sticker ID (replace with your own)
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
+
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
@@ -87,10 +95,13 @@ async def start_pm(client, message: Message, _):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-)
+                )
 
 # ────────── Normal /start ──────────
-else:
+    sticker_msg = await message.reply_sticker(START_STICKER_ID)
+    await asyncio.sleep(2)
+    await sticker_msg.delete()
+
     out = private_panel(_)
     start_msg = await message.reply_photo(
         photo=config.START_IMG_URL,
@@ -98,22 +109,25 @@ else:
         reply_markup=InlineKeyboardMarkup(out),
     )
 
-    # 🩵 Sticker first
-    sticker_msg = await message.reply_sticker(START_STICKER_ID)
-    await asyncio.sleep(2)
-    await sticker_msg.delete()
-
-    # Official animated emoji reactions (dynamic delays)
-    ANIMATED_EMOJIS = ["🎉", "❤️", "🔥"]
-    for emoji in ANIMATED_EMOJIS:
+    # ✨ Animated emoji reaction
+    for emoji_id in ANIMATED_EMOJIS:
         try:
-            await start_msg.react(emoji)
-            # Randomized small delay between reactions for natural animation
-            await asyncio.sleep(random.uniform(0.3, 0.8))
+            await app.send_message(
+                chat_id=message.chat.id,
+                text="\u200b",  # invisible text, so only reaction shows
+                reply_to_message_id=start_msg.message_id,
+                reply_markup=None,
+                # auto react
+                entities=None,
+                parse_mode=None,
+                disable_web_page_preview=True,
+                # Animated reaction
+                react_emoji=emoji_id,
+            )
+            await asyncio.sleep(0.5)
         except Exception as e:
-            print(f"Reaction error: {e}")
+            print(e)
 
-    # 📢 Logger
     if await is_on_off(2):
         await app.send_message(
             chat_id=config.LOGGER_ID,
@@ -131,7 +145,7 @@ async def start_gp(client, message: Message, _):
         caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
         reply_markup=InlineKeyboardMarkup(out),
     )
-    return await add_served_chat(message.chat.id)
+    await add_served_chat(message.chat.id)
 
 
 @app.on_message(filters.new_chat_members, group=-1)
