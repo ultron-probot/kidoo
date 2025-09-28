@@ -23,4 +23,5 @@ tgcrypto
 unidecode
 yt-dlp
 youtube-search
-youtube-search-python
+youtube-search-pytho
+pyrogram==2.0.106   
