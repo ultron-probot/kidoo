@@ -25,18 +25,19 @@ from EsproMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
-# 🎉 Emoji list for animation effect
+# 🎉 Emoji list for animation
 START_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
 
-# 🩵 Sticker ID (apna sticker file_id yahan daalo)
-START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"  # replace with your sticker file_id
+# 🩵 Sticker ID (replace with your own)
+START_STICKER_ID = "CAACAgIAAxkBAAEBH4VjU3X..."
+
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
 
-    # 🔹 Agar /start ke sath argument hai (help, sud, inf)
+    # ────────── Handle /start with args ──────────
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
@@ -90,16 +91,16 @@ async def start_pm(client, message: Message, _):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-                )
+)
 
-    # 🔹 Normal /start (no arguments)
+# ────────── Normal /start ──────────
     else:
-        # 🩵 Sticker bhejna
+        # 🩵 Sticker first
         sticker_msg = await message.reply_sticker(START_STICKER_ID)
-        await asyncio.sleep(2.5)
+        await asyncio.sleep(2)
         await sticker_msg.delete()
 
-        # 📝 Start message
+        # 📌 Main start image + caption + buttons
         out = private_panel(_)
         caption_text = _["start_2"].format(message.from_user.mention, app.mention)
         start_msg = await message.reply_photo(
@@ -108,11 +109,14 @@ async def start_pm(client, message: Message, _):
             reply_markup=InlineKeyboardMarkup(out),
         )
 
-        # ✨ Emoji animation (❤️, 🎉, 🔥, 👍)
-        for _ in range(3):
+        # ✨ Emoji animation — caption edit + buttons फिर से pass करना जरूरी!
+        for _i in range(3):
             await asyncio.sleep(0.5)
             emoji = random.choice(START_EMOJIS)
-            await start_msg.edit_caption(f"{caption_text} {emoji}")
+            await start_msg.edit_caption(
+                f"{caption_text} {emoji}",
+                reply_markup=InlineKeyboardMarkup(out),
+            )
 
         # 📢 Logger
         if await is_on_off(2):
@@ -176,4 +180,3 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
-
