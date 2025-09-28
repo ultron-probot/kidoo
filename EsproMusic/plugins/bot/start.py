@@ -28,8 +28,12 @@ from strings import get_string
 # 🩵 Sticker ID (replace with your own)
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
 
-# 3 Random Animated Emoji reactions
-ANIMATED_EMOJIS = ["🎉", "❤️", "🔥"]
+# ✨ Official Telegram Animated Emoji IDs (For Reactions)
+ANKIT_ANIMATED_EMOJIS = [
+    "5368324170671202286",  # 🎉
+    "5192443872304980006",  # ❤️
+    "5254878683054006236",  # 🔥
+]
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
@@ -92,7 +96,7 @@ async def start_pm(client, message: Message, _):
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
 
-# ────────── Normal /start ──────────
+    # ────────── Normal /start ──────────
     else:
         # 🩵 Sticker first
         sticker_msg = await message.reply_sticker(START_STICKER_ID)
@@ -102,16 +106,16 @@ async def start_pm(client, message: Message, _):
         # 📌 Main start image + caption + buttons
         out = private_panel(_)
         caption_text = _["start_2"].format(message.from_user.mention, app.mention)
-        start_msg = await message.reply_photo(
+        await message.reply_photo(
             photo=config.START_IMG_URL,
             caption=caption_text,
             reply_markup=InlineKeyboardMarkup(out),
         )
 
-        # ✨ Auto Animated Emoji Reactions (Telegram style)
-        for emoji in ANIMATED_EMOJIS:
+        # ✨ React on USER'S /start MESSAGE with animated emoji IDs
+        for emoji_id in ANKIT_ANIMATED_EMOJIS:
             try:
-                await start_msg.react(emoji)
+                await message.react(emoji_id)
                 await asyncio.sleep(0.3)
             except Exception as e:
                 print(f"Emoji reaction failed: {e}")
