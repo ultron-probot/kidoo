@@ -99,10 +99,10 @@ async def start_pm(client, message: Message, _):
 
     # ────────── Normal /start ──────────
     else:
-    # 🩵 Sticker first
-    sticker_msg = await message.reply_sticker(START_STICKER_ID)
-    await asyncio.sleep(2)
-    await sticker_msg.delete()
+        # 🩵 Sticker first
+         sticker_msg = await message.reply_sticker(START_STICKER_ID)
+         await asyncio.sleep(2)
+         await sticker_msg.delete()
 
     # 📌 Main start image + caption + buttons
     out = private_panel(_)
@@ -185,5 +185,6 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+
 
 
