@@ -28,9 +28,6 @@ from strings import get_string
 # 🩵 Sticker ID (replace with your own)
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
 
-# 3 Random Animated Emoji reactions
-ANIMATED_EMOJIS = ["🎉", "❤️", "🔥"]
-
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
@@ -90,38 +87,38 @@ async def start_pm(client, message: Message, _):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-            )
+)
 
 # ────────── Normal /start ──────────
-    else:
-        # 🩵 Sticker first
-        sticker_msg = await message.reply_sticker(START_STICKER_ID)
-        await asyncio.sleep(2)
-        await sticker_msg.delete()
+else:
+    out = private_panel(_)
+    start_msg = await message.reply_photo(
+        photo=config.START_IMG_URL,
+        caption=_["start_2"].format(message.from_user.mention, app.mention),
+        reply_markup=InlineKeyboardMarkup(out),
+    )
 
-        # 📌 Main start image + caption + buttons
-        out = private_panel(_)
-        caption_text = _["start_2"].format(message.from_user.mention, app.mention)
-        start_msg = await message.reply_photo(
-            photo=config.START_IMG_URL,
-            caption=caption_text,
-            reply_markup=InlineKeyboardMarkup(out),
+    # 🩵 Sticker first
+    sticker_msg = await message.reply_sticker(START_STICKER_ID)
+    await asyncio.sleep(2)
+    await sticker_msg.delete()
+
+    # Official animated emoji reactions (dynamic delays)
+    ANIMATED_EMOJIS = ["🎉", "❤️", "🔥"]
+    for emoji in ANIMATED_EMOJIS:
+        try:
+            await start_msg.react(emoji)
+            # Randomized small delay between reactions for natural animation
+            await asyncio.sleep(random.uniform(0.3, 0.8))
+        except Exception as e:
+            print(f"Reaction error: {e}")
+
+    # 📢 Logger
+    if await is_on_off(2):
+        await app.send_message(
+            chat_id=config.LOGGER_ID,
+            text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
         )
-
-        # ✨ Auto Animated Emoji Reactions (Telegram style)
-        for emoji in ANIMATED_EMOJIS:
-            try:
-                await start_msg.react(emoji)
-                await asyncio.sleep(0.3)
-            except Exception as e:
-                print(f"Emoji reaction failed: {e}")
-
-        # 📢 Logger
-        if await is_on_off(2):
-            return await app.send_message(
-                chat_id=config.LOGGER_ID,
-                text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-            )
 
 
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
