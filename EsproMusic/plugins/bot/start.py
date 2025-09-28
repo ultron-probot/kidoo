@@ -29,7 +29,7 @@ from strings import get_string
 START_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
 
 # 🩵 Sticker ID (apna sticker file_id yahan daalo)
-START_STICKER_ID = "CAACAgIAAxkBAAEBH4VjU3X..."  # replace with your sticker file_id
+START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"  # replace with your sticker file_id
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
@@ -176,3 +176,4 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+
