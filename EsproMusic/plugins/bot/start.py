@@ -4,7 +4,7 @@ import random
 
 from pyrogram import filters
 from pyrogram.enums import ChatType
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, MessageEntity
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtubesearchpython.__future__ import VideosSearch
 
 import config
@@ -25,7 +25,14 @@ from EsproMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
-# 🩵 Sticker ID (replace with your own)
+# 🎉 Animated Emoji IDs (1st, 2nd, 4th wali)
+ANIMATED_EMOJIS = [
+    "5368324170671202286",  # 🎉
+    "5192443872304980006",  # ❤️
+    "5254878683054006236",  # 🔥
+]
+
+# 🩵 Sticker ID
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
@@ -36,24 +43,26 @@ async def start_pm(client, message: Message, _):
     # ────────── Handle /start with args ──────────
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
-        if name[0:4] == "help":
+        if name.startswith("help"):
             keyboard = help_pannel(_)
             return await message.reply_photo(
                 photo=config.START_IMG_URL,
                 caption=_["help_1"].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
             )
-        if name[0:3] == "sud":
+        if name.startswith("sud"):
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
+                    text=f"{message.from_user.mention} just started the bot to check sudo list.\n\n"
+                         f"User ID: <code>{message.from_user.id}</code>\n"
+                         f"Username: @{message.from_user.username}",
                 )
             return
-        if name[0:3] == "inf":
+        if name.startswith("inf"):
             m = await message.reply_text("🔎")
-            query = (str(name)).replace("info_", "", 1)
+            query = name.replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
             results = VideosSearch(query, limit=1)
             for result in (await results.next())["result"]:
@@ -65,6 +74,7 @@ async def start_pm(client, message: Message, _):
                 channel = result["channel"]["name"]
                 link = result["link"]
                 published = result["publishedTime"]
+
             searched_text = _["start_6"].format(
                 title, duration, views, published, channellink, channel, app.mention
             )
@@ -86,49 +96,46 @@ async def start_pm(client, message: Message, _):
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-                )
+                    text=f"{message.from_user.mention} just started the bot to check track info.\n\n"
+                         f"User ID: <code>{message.from_user.id}</code>\n"
+                         f"Username: @{message.from_user.username}",
+            )
 
 # ────────── Normal /start ──────────
-else:
-    # 🩵 Sticker first
-    sticker_msg = await message.reply_sticker(START_STICKER_ID)
-    await asyncio.sleep(2)
-    await sticker_msg.delete()
+    else:
+        # 🩵 Sticker first
+        sticker_msg = await message.reply_sticker(START_STICKER_ID)
+        await asyncio.sleep(2)
+        await sticker_msg.delete()
 
-    # 📌 Main start image + caption + buttons
-    out = private_panel(_)
-    caption_text = _["start_2"].format(message.from_user.mention, app.mention)
-    start_msg = await message.reply_photo(
-        photo=config.START_IMG_URL,
-        caption=caption_text,
-        reply_markup=InlineKeyboardMarkup(out),
-    )
-
-    # 🪄 Animated Emoji IDs
-    ANIMATED_EMOJIS = [
-        "5368324170671202286",  # 🎉
-        "5192443872304980006",  # ❤️
-        "5254878683054006236",  # 🔥
-    ]
-
-    # ✨ Emoji animation — use animated emojis
-    for _i in range(3):
-        await asyncio.sleep(0.5)
-        emoji_id = random.choice(ANIMATED_EMOJIS)
-        await start_msg.edit_text(
-            text=caption_text,
-            entities=[MessageEntity(type="custom_emoji", custom_emoji_id=emoji_id)],
+        # 📌 Main start image + caption + buttons
+        out = private_panel(_)
+        caption_text = _["start_2"].format(message.from_user.mention, app.mention)
+        start_msg = await message.reply_photo(
+            photo=config.START_IMG_URL,
+            caption=caption_text,
+            reply_markup=InlineKeyboardMarkup(out),
         )
 
-    # 📢 Logger
-    if await is_on_off(2):
-        return await app.send_message(
-            chat_id=config.LOGGER_ID,
-            text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-        )
+        # ✨ Animated Emoji Loop — caption edit
+        for _i in range(3):
+            await asyncio.sleep(0.5)
+            animated_emoji = random.choice(ANIMATED_EMOJIS)
+            await start_msg.edit_caption(
+                f"{caption_text} {animated_emoji}",
+                reply_markup=InlineKeyboardMarkup(out),
+            )
 
-# ────────── Group /start ──────────
+        # 📢 Logger
+        if await is_on_off(2):
+            await app.send_message(
+                chat_id=config.LOGGER_ID,
+                text=f"{message.from_user.mention} just started the bot.\n\n"
+                     f"User ID: <code>{message.from_user.id}</code>\n"
+                     f"Username: @{message.from_user.username}",
+            )
+
+
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
@@ -139,9 +146,9 @@ async def start_gp(client, message: Message, _):
         caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
         reply_markup=InlineKeyboardMarkup(out),
     )
-    return await add_served_chat(message.chat.id)
+    await add_served_chat(message.chat.id)
 
-# ────────── Welcome new members ──────────
+
 @app.on_message(filters.new_chat_members, group=-1)
 async def welcome(client, message: Message):
     for member in message.new_chat_members:
