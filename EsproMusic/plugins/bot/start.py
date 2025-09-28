@@ -1,6 +1,4 @@
 import time
-import asyncio
-import random
 
 from pyrogram import filters
 from pyrogram.enums import ChatType
@@ -25,18 +23,11 @@ from EsproMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
-# 🎉 Emoji list for animation effect
-START_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
-
-# 🩵 Sticker ID (apna sticker file_id yahan daalo)
-START_STICKER_ID = "CAACAgIAAxkBAAEBH4VjU3X..."  # replace with your sticker file_id
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
-
-    # 🔹 Agar /start ke sath argument hai (help, sud, inf)
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
@@ -91,30 +82,13 @@ async def start_pm(client, message: Message, _):
                     chat_id=config.LOGGER_ID,
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
-
-    # 🔹 Normal /start (no arguments)
     else:
-        # 🩵 Sticker bhejna
-        sticker_msg = await message.reply_sticker(START_STICKER_ID)
-        await asyncio.sleep(2.5)
-        await sticker_msg.delete()
-
-        # 📝 Start message
         out = private_panel(_)
-        caption_text = _["start_2"].format(message.from_user.mention, app.mention)
-        start_msg = await message.reply_photo(
+        await message.reply_photo(
             photo=config.START_IMG_URL,
-            caption=caption_text,
+            caption=_["start_2"].format(message.from_user.mention, app.mention),
             reply_markup=InlineKeyboardMarkup(out),
         )
-
-        # ✨ Emoji animation (❤️, 🎉, 🔥, 👍)
-        for _ in range(3):
-            await asyncio.sleep(0.5)
-            emoji = random.choice(START_EMOJIS)
-            await start_msg.edit_caption(f"{caption_text} {emoji}")
-
-        # 📢 Logger
         if await is_on_off(2):
             return await app.send_message(
                 chat_id=config.LOGGER_ID,
