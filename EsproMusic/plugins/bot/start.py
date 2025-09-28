@@ -25,15 +25,11 @@ from EsproMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
-# 🎉 Animated Emoji IDs (1st, 2nd, 4th wali)
-ANIMATED_EMOJIS = [
-    "5368324170671202286",  # 🎉
-    "5192443872304980006",  # ❤️
-    "5254878683054006236",  # 🔥
-]
-
-# 🩵 Sticker ID
+# 🩵 Sticker ID (replace with your own)
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
+
+# 3 Random Animated Emoji reactions
+ANIMATED_EMOJIS = ["🎉", "❤️", "🔥"]
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
@@ -43,26 +39,24 @@ async def start_pm(client, message: Message, _):
     # ────────── Handle /start with args ──────────
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
-        if name.startswith("help"):
+        if name[0:4] == "help":
             keyboard = help_pannel(_)
             return await message.reply_photo(
                 photo=config.START_IMG_URL,
                 caption=_["help_1"].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
             )
-        if name.startswith("sud"):
+        if name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    text=f"{message.from_user.mention} just started the bot to check sudo list.\n\n"
-                         f"User ID: <code>{message.from_user.id}</code>\n"
-                         f"Username: @{message.from_user.username}",
+                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
             return
-        if name.startswith("inf"):
+        if name[0:3] == "inf":
             m = await message.reply_text("🔎")
-            query = name.replace("info_", "", 1)
+            query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
             results = VideosSearch(query, limit=1)
             for result in (await results.next())["result"]:
@@ -74,7 +68,6 @@ async def start_pm(client, message: Message, _):
                 channel = result["channel"]["name"]
                 link = result["link"]
                 published = result["publishedTime"]
-
             searched_text = _["start_6"].format(
                 title, duration, views, published, channellink, channel, app.mention
             )
@@ -96,9 +89,7 @@ async def start_pm(client, message: Message, _):
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    text=f"{message.from_user.mention} just started the bot to check track info.\n\n"
-                         f"User ID: <code>{message.from_user.id}</code>\n"
-                         f"Username: @{message.from_user.username}",
+                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
             )
 
 # ────────── Normal /start ──────────
@@ -117,22 +108,19 @@ async def start_pm(client, message: Message, _):
             reply_markup=InlineKeyboardMarkup(out),
         )
 
-        # ✨ Animated Emoji Loop — caption edit
-        for _i in range(3):
-            await asyncio.sleep(0.5)
-            animated_emoji = random.choice(ANIMATED_EMOJIS)
-            await start_msg.edit_caption(
-                f"{caption_text} {animated_emoji}",
-                reply_markup=InlineKeyboardMarkup(out),
-            )
+        # ✨ Auto Animated Emoji Reactions (Telegram style)
+        for emoji in ANIMATED_EMOJIS:
+            try:
+                await start_msg.react(emoji)
+                await asyncio.sleep(0.3)
+            except Exception as e:
+                print(f"Emoji reaction failed: {e}")
 
         # 📢 Logger
         if await is_on_off(2):
-            await app.send_message(
+            return await app.send_message(
                 chat_id=config.LOGGER_ID,
-                text=f"{message.from_user.mention} just started the bot.\n\n"
-                     f"User ID: <code>{message.from_user.id}</code>\n"
-                     f"Username: @{message.from_user.username}",
+                text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
             )
 
 
@@ -146,7 +134,7 @@ async def start_gp(client, message: Message, _):
         caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
         reply_markup=InlineKeyboardMarkup(out),
     )
-    await add_served_chat(message.chat.id)
+    return await add_served_chat(message.chat.id)
 
 
 @app.on_message(filters.new_chat_members, group=-1)
