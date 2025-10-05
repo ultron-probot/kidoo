@@ -181,7 +181,7 @@ async def welcome(client, message: Message):
         except Exception as ex:
             print(ex)
 
-# 📌 जब Bot को किसी Group में Add किया जाए (Log Event)
+# (Ankit Event)
 @app.on_message(filters.new_chat_members, group=1)
 async def bot_added_log(client, message: Message):
     for member in message.new_chat_members:
@@ -211,7 +211,7 @@ async def bot_added_log(client, message: Message):
                 await app.send_message(config.LOGGER_ID, text)
             except Exception as e:
                 print(f"Logger Error (bot_added_log): {e}")
-# 📌 जब Bot किसी Group से निकले या हटाया जाए (Log Event)
+#  (Ankit Event)
 @app.on_message(filters.left_chat_member, group=1)
 async def bot_removed_log(client, message: Message):
     if message.left_chat_member.id == app.id:
@@ -240,6 +240,7 @@ async def bot_removed_log(client, message: Message):
             await app.send_message(config.LOGGER_ID, text)
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
