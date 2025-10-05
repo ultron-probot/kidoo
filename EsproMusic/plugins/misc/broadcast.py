@@ -144,7 +144,7 @@ async def addpremium_cmd(_, message):
         return await message.reply_text("➥ᴘʟᴇᴀsᴇ ɢɪᴠᴇ ɪᴛ ɪɴ ʀɪɢʜᴛ ғᴏʀᴍᴀᴛᴇ: /addpremium 123456789 30")
 
     await add_premium_user(user_id, days)
-    await message.reply_text(f"✅ ʙᴀʙʏ ᴛʜᴇʏ ➥ `{user_id}` ʜᴀᴠᴇ {days} ")
+    await message.reply_text(f"✅ ʙᴀʙʏ ᴛʜᴇʏ ➥ `{user_id}` ʜᴀᴠᴇ ᴀʟʟᴏᴡᴇᴅ ʙʏ ʏᴏᴜ ᴛᴏ ғᴜᴄᴋ ᴍᴇ {days} ")
 
 
 # ✅ Delete Premium Command
@@ -197,6 +197,7 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
 
 
 
