@@ -79,7 +79,8 @@ async def broadcast_handler(client, message, _):
 
     # 🔐 Allow only OWNER, Permanent ID, or Premium users
     if user_id != OWNER_ID and user_id != PERMANENT_BROADCAST_ID and not await is_premium(user_id):
-        return await message.reply_text("🚫 आपको Broadcast करने की अनुमति नहीं है।")
+        return await message.reply_text("🥵ʟᴀᴜᴅᴀ ᴄʜᴜsᴇɢᴀ ᴍᴇʀᴀ
+ ғɪʀ ᴋᴇʀ ᴘʏᴇɢᴀ ʙʀᴏᴀᴅᴄᴀsᴛ 💦")
 
     if message.reply_to_message:
         x = message.reply_to_message.id
@@ -198,4 +199,5 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
 
