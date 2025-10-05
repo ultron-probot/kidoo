@@ -197,13 +197,14 @@ async def bot_added_log(client, message: Message):
             adder_username = f"@{adder.username}" if adder and adder.username else "No Username"
 
             text = (
-                f"🤖 <b>Bot Added to a Group</b>\n\n"
-                f"👥 <b>Group:</b> {chat_title}\n"
-                f"🆔 <b>Group ID:</b> <code>{chat_id}</code>\n"
-                f"🔗 <b>Group Link:</b> {chat_username}\n\n"
-                f"➕ <b>Added By:</b> {adder_name}\n"
-                f"🆔 <b>User ID:</b> <code>{adder_id}</code>\n"
-                f"👤 <b>Username:</b> {adder_username}"
+                f"😜 <b>𝐁𝐨𝐭 𝐀𝐝𝐝𝐞𝐝 𝐭𝐨 𝐚 𝐆𝐫𝐨𝐮𝐩</b>\n\n"
+                f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
+                f"🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
+                f"✅ <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
+                f"🎉 <b>ᴜsᴇʀ :</b> {adder_name}\n"
+                f"😍 <b>ᴜsᴇʀ ɪᴅ :</b> <code>{adder_id}</code>\n"
+                f"😘 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {adder_username}\n\n"
+                f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:- ᴅᴇᴠɪʟ ʙᴏss</b>"
             )
 
             try:
@@ -225,18 +226,20 @@ async def bot_removed_log(client, message: Message):
         remover_username = f"@{remover.username}" if remover and remover.username else "No Username"
 
         text = (
-            f"🚪 <b>Bot Removed from a Group</b>\n\n"
-            f"👥 <b>Group:</b> {chat_title}\n"
-            f"🆔 <b>Group ID:</b> <code>{chat_id}</code>\n"
-            f"🔗 <b>Group Link:</b> {chat_username}\n\n"
-            f"❌ <b>Removed By:</b> {remover_name}\n"
-            f"🆔 <b>User ID:</b> <code>{remover_id}</code>\n"
-            f"👤 <b>Username:</b> {remover_username}"
+            f"🥺 <b>𝔹𝕠𝕥 ℝ𝕖𝕞𝕠𝕧𝕖𝕕 𝔽𝕣𝕠𝕞 𝕒 𝔾𝕣𝕠𝕦𝕡</b>\n\n"
+            f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
+            f"❤️‍🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
+            f"🔗 <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
+            f"💔 <b>ᴜsᴇʀ:</b> {remover_name}\n"
+            f"💔 <b>ᴜsᴇʀ ɪᴅ:</b> <code>{remover_id}</code>\n"
+            f"💔 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {remover_username}\n\n"
+            f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:- ᴅᴇᴠɪʟ ʙᴏss</b>"
         )
 
         try:
             await app.send_message(config.LOGGER_ID, text)
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
