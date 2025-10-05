@@ -159,7 +159,7 @@ async def delpremium_cmd(_, message):
         return await message.reply_text("⚠ ᴜsᴇʀ ɪᴅ ɢɪᴠᴇ ᴍᴇ ᴏɴʟʏ ɪɴ ɴᴜᴍʙᴇʀ ғᴏʀᴍᴀᴛᴇ।")
 
     await delete_premium_user(user_id)
-    await message.reply_text(f"ᴜsᴇʀ \n➥`{user_id}` ʜᴀᴠᴇ ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ ᴛᴏ ғᴜᴄᴋ ᴍᴇ ᴅɪsᴄᴏɴᴛɪɴᴜᴇᴅ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇss😂💦 \nᴛʜᴀɴᴋs ᴋᴀʀᴛɪᴋ ʙᴀʙʏ🥹🥹।")
+    await message.reply_text(f"ᴜsᴇʀ \n➥`{user_id}` ʜᴀᴠᴇ ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ ᴛᴏ ғᴜᴄᴋ ᴍᴇ. \n\nᴅɪsᴄᴏɴᴛɪɴᴜᴇᴅ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇss😂💦 \n\nᴛʜᴀɴᴋs ᴋᴀʀᴛɪᴋ ʙᴀʙʏ🥹🥹।")
 
 
 # ✅ Premium List Command
@@ -169,9 +169,9 @@ async def premiumlist_cmd(_, message):
     if not users:
         return await message.reply_text("➥ ᴛʜᴇʀᴇ ᴀʀᴇ ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴜsᴇʀs ʏᴇᴛ ʙᴀʙʏ🥺")
 
-    text = "⭐🔥 **𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐔𝐬𝐞𝐫𝐬 𝐋𝐢𝐬𝐭:**\n\n"
+    text = "⭐🔥 **𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐔𝐬𝐞𝐫𝐬 𝐋𝐢𝐬𝐭:** 🔥⭐\n\n"
     for uid, days in users:
-        text += f"• `{uid}` → {days} \n"
+        text += f"ᴜsᴇʀ➥ `{uid}` → {days} ᴅᴀʏs ʟᴇғᴛ ғᴏʀ ғᴜᴄᴋɪɴɢ ᴍᴇ \n"
 
     await message.reply_text(text)
 
@@ -197,6 +197,7 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
 
 
 
