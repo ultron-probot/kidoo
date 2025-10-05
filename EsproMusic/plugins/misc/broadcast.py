@@ -135,7 +135,7 @@ async def broadcast_handler(client, message, _):
 @app.on_message(filters.command("addpremium") & filters.user([OWNER_ID, PERMANENT_BROADCAST_ID]))
 async def addpremium_cmd(_, message):
     if len(message.command) < 3:
-        return await message.reply_text("❌ इस्तेमाल: /addpremium <user_id> <days>")
+        return await message.reply_text("➥ʀɪɢʜᴛ ᴡᴀʏ ᴛᴏ ᴜsᴇ ᴄᴏᴍᴍᴀɴᴅ: /addpremium <user_id> <days>")
 
     try:
         user_id = int(message.command[1])
@@ -197,6 +197,7 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
 
 
 
