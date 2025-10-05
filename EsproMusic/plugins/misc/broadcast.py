@@ -168,11 +168,11 @@ async def delpremium_cmd(_, message):
 async def premiumlist_cmd(_, message):
     users = await list_premium_users()
     if not users:
-        return await message.reply_text("👤 कोई Premium User नहीं है।")
+        return await message.reply_text("➥ ᴛʜᴇʀᴇ ᴀʀᴇ ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴜsᴇʀs ʏᴇᴛ ʙᴀʙʏ🥺")
 
     text = "⭐ **Premium Users List:**\n\n"
     for uid, days in users:
-        text += f"• `{uid}` → {days} दिन बाकी\n"
+        text += f"• `{uid}` → {days} \n"
 
     await message.reply_text(text)
 
@@ -198,3 +198,4 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
