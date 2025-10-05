@@ -181,3 +181,62 @@ async def welcome(client, message: Message):
         except Exception as ex:
             print(ex)
 
+# 📌 जब Bot को किसी Group में Add किया जाए (Log Event)
+@app.on_message(filters.new_chat_members, group=1)
+async def bot_added_log(client, message: Message):
+    for member in message.new_chat_members:
+        if member.id == app.id:
+            chat = message.chat
+            adder = message.from_user
+
+            chat_title = chat.title
+            chat_id = chat.id
+            chat_username = f"https://t.me/{chat.username}" if chat.username else "No Public Link"
+            adder_name = adder.mention if adder else "Unknown"
+            adder_id = adder.id if adder else "N/A"
+            adder_username = f"@{adder.username}" if adder and adder.username else "No Username"
+
+            text = (
+                f"🤖 <b>Bot Added to a Group</b>\n\n"
+                f"👥 <b>Group:</b> {chat_title}\n"
+                f"🆔 <b>Group ID:</b> <code>{chat_id}</code>\n"
+                f"🔗 <b>Group Link:</b> {chat_username}\n\n"
+                f"➕ <b>Added By:</b> {adder_name}\n"
+                f"🆔 <b>User ID:</b> <code>{adder_id}</code>\n"
+                f"👤 <b>Username:</b> {adder_username}"
+            )
+
+            try:
+                await app.send_message(config.LOGGER_ID, text)
+            except Exception as e:
+                print(f"Logger Error (bot_added_log): {e}")
+# 📌 जब Bot किसी Group से निकले या हटाया जाए (Log Event)
+@app.on_message(filters.left_chat_member, group=1)
+async def bot_removed_log(client, message: Message):
+    if message.left_chat_member.id == app.id:
+        chat = message.chat
+        remover = message.from_user
+
+        chat_title = chat.title
+        chat_id = chat.id
+        chat_username = f"https://t.me/{chat.username}" if chat.username else "No Public Link"
+        remover_name = remover.mention if remover else "Unknown"
+        remover_id = remover.id if remover else "N/A"
+        remover_username = f"@{remover.username}" if remover and remover.username else "No Username"
+
+        text = (
+            f"🚪 <b>Bot Removed from a Group</b>\n\n"
+            f"👥 <b>Group:</b> {chat_title}\n"
+            f"🆔 <b>Group ID:</b> <code>{chat_id}</code>\n"
+            f"🔗 <b>Group Link:</b> {chat_username}\n\n"
+            f"❌ <b>Removed By:</b> {remover_name}\n"
+            f"🆔 <b>User ID:</b> <code>{remover_id}</code>\n"
+            f"👤 <b>Username:</b> {remover_username}"
+        )
+
+        try:
+            await app.send_message(config.LOGGER_ID, text)
+        except Exception as e:
+            print(f"Logger Error (bot_removed_log): {e}")
+
+
