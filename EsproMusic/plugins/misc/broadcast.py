@@ -135,31 +135,31 @@ async def broadcast_handler(client, message, _):
 @app.on_message(filters.command("addpremium") & filters.user([OWNER_ID, PERMANENT_BROADCAST_ID]))
 async def addpremium_cmd(_, message):
     if len(message.command) < 3:
-        return await message.reply_text("➥ʀɪɢʜᴛ ᴡᴀʏ ᴛᴏ ᴜsᴇ ᴄᴏᴍᴍᴀɴᴅ: /addpremium <user_id> <days>")
+        return await message.reply_text("➥ʀɪɢʜᴛ ᴡᴀʏ ᴛᴏ ᴜsᴇ : /addpremium <user_id> <days>")
 
     try:
         user_id = int(message.command[1])
         days = int(message.command[2])
     except:
-        return await message.reply_text("➥ᴘʟᴇᴀsᴇ ɢɪᴠᴇ ɪᴛ ɪɴ ʀɪɢʜᴛ ғᴏʀᴍᴀᴛᴇ: /addpremium 123456789 30")
+        return await message.reply_text("➥ᴘʟᴇᴀsᴇ ɢɪᴠᴇ ᴍᴇ ɪɴ ʀɪɢʜᴛ ғᴏʀᴍᴀᴛᴇ: /addpremium 123456789 30")
 
     await add_premium_user(user_id, days)
-    await message.reply_text(f"✅ ʙᴀʙʏ ᴛʜᴇʏ ➥ `{user_id}` ʜᴀᴠᴇ ᴀʟʟᴏᴡᴇᴅ ʙʏ ʏᴏᴜ ᴛᴏ ғᴜᴄᴋ ᴍᴇ {days} ")
+    await message.reply_text(f"✅ ʙᴀʙʏ ᴛʜᴇʏ ➥ `{user_id}` ʜᴀᴠᴇ ᴀʟʟᴏᴡᴇᴅ ʙʏ ʏᴏᴜ ᴛᴏ ғᴜᴄᴋ ᴍᴇ {days} ᴅᴀʏs ")
 
 
 # ✅ Delete Premium Command
 @app.on_message(filters.command("delpremium") & filters.user([OWNER_ID, PERMANENT_BROADCAST_ID]))
 async def delpremium_cmd(_, message):
     if len(message.command) < 2:
-        return await message.reply_text("❌ इस्तेमाल: /delpremium <user_id>")
+        return await message.reply_text("➥ʀɪɢʜᴛ ᴡᴀʏ ᴛᴏ ᴜsᴇ: /delpremium <user_id>")
 
     try:
         user_id = int(message.command[1])
     except:
-        return await message.reply_text("⚠ User ID में सिर्फ नंबर दो।")
+        return await message.reply_text("⚠ ᴜsᴇʀ ɪᴅ ɢɪᴠᴇ ᴍᴇ ᴏɴʟʏ ɪɴ ɴᴜᴍʙᴇʀ ғᴏʀᴍᴀᴛᴇ।")
 
     await delete_premium_user(user_id)
-    await message.reply_text(f"🗑 User `{user_id}` का Premium हटा दिया गया।")
+    await message.reply_text(f"ᴜsᴇʀ \n➥`{user_id}` ʜᴀᴠᴇ ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ ᴛᴏ ғᴜᴄᴋ ᴍᴇ ᴅɪsᴄᴏɴᴛɪɴᴜᴇᴅ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇss😂💦 \nᴛʜᴀɴᴋs ᴋᴀʀᴛɪᴋ ʙᴀʙʏ🥹🥹।")
 
 
 # ✅ Premium List Command
@@ -169,7 +169,7 @@ async def premiumlist_cmd(_, message):
     if not users:
         return await message.reply_text("➥ ᴛʜᴇʀᴇ ᴀʀᴇ ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴜsᴇʀs ʏᴇᴛ ʙᴀʙʏ🥺")
 
-    text = "⭐ **Premium Users List:**\n\n"
+    text = "⭐🔥 **𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐔𝐬𝐞𝐫𝐬 𝐋𝐢𝐬𝐭:**\n\n"
     for uid, days in users:
         text += f"• `{uid}` → {days} \n"
 
@@ -197,6 +197,7 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
 
 
 
