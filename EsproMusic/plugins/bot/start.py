@@ -208,7 +208,12 @@ async def bot_added_log(client, message: Message):
             )
 
             try:
-                await app.send_message(config.LOGGER_ID, text)
+                await app.send_message(
+    chat_id=config.LOGGER_ID,
+    text=text,
+    parse_mode="html",
+    disable_web_page_preview=True
+)
             except Exception as e:
                 print(f"Logger Error (bot_added_log): {e}")
 #  (Ankit Event)
@@ -237,9 +242,15 @@ async def bot_removed_log(client, message: Message):
         )
 
         try:
-            await app.send_message(config.LOGGER_ID, text)
+            await app.send_message(
+    chat_id=config.LOGGER_ID,
+    text=text,
+    parse_mode="html",
+    disable_web_page_preview=True  
+            )
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
