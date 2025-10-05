@@ -141,10 +141,10 @@ async def addpremium_cmd(_, message):
         user_id = int(message.command[1])
         days = int(message.command[2])
     except:
-        return await message.reply_text("⚠ सही Format में दो: /addpremium 123456789 30")
+        return await message.reply_text("➥ᴘʟᴇᴀsᴇ ɢɪᴠᴇ ɪᴛ ɪɴ ʀɪɢʜᴛ ғᴏʀᴍᴀᴛᴇ: /addpremium 123456789 30")
 
     await add_premium_user(user_id, days)
-    await message.reply_text(f"✅ User `{user_id}` को {days} दिन का Premium दे दिया गया।")
+    await message.reply_text(f"✅ ʙᴀʙʏ ᴛʜᴇʏ ➥ `{user_id}` ʜᴀᴠᴇ {days} ")
 
 
 # ✅ Delete Premium Command
@@ -197,6 +197,7 @@ async def auto_clean():
             continue
 
 asyncio.create_task(auto_clean())
+
 
 
 
