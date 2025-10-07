@@ -181,7 +181,7 @@ async def welcome(client, message: Message):
         except Exception as ex:
             print(ex)
 
-# (Ankit Event)
+#  (Log Event)
 @app.on_message(filters.new_chat_members, group=1)
 async def bot_added_log(client, message: Message):
     for member in message.new_chat_members:
@@ -195,7 +195,7 @@ async def bot_added_log(client, message: Message):
             adder_name = adder.mention if adder else "Unknown"
             adder_id = adder.id if adder else "N/A"
             adder_username = f"@{adder.username}" if adder and adder.username else "No Username"
-            
+
             from pyrogram.enums import ParseMode
             
             text = (
@@ -254,6 +254,7 @@ async def bot_removed_log(client, message: Message):
             )
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
