@@ -196,26 +196,28 @@ async def bot_added_log(client, message: Message):
             adder_id = adder.id if adder else "N/A"
             adder_username = f"@{adder.username}" if adder and adder.username else "No Username"
 
-            text = (
-                f"😜 <b>𝐁𝐨𝐭 𝐀𝐝𝐝𝐞𝐝 𝐭𝐨 𝐚 𝐆𝐫𝐨𝐮𝐩</b>\n\n"
-                f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
-                f"🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
-                f"✅ <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
-                f"🎉 <b>ᴜsᴇʀ :</b> {adder_name}\n"
-                f"😍 <b>ᴜsᴇʀ ɪᴅ :</b> <code>{adder_id}</code>\n"
-                f"😘 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {adder_username}\n\n"
-                f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
-            )
+            from pyrogram.enums import ParseMode
 
-            try:
-                await app.send_message(
-    chat_id=config.LOGGER_ID,
-    text=text,
-    parse_mode="HTML",
-    disable_web_page_preview=True
+text = (
+    f"😜 <b>𝐁𝐨𝐭 𝐀𝐝𝐝𝐞𝐝 𝐭𝐨 𝐚 𝐆𝐫𝐨𝐮𝐩</b>\n\n"
+    f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
+    f"🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
+    f"✅ <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
+    f"🎉 <b>ᴜsᴇʀ :</b> {adder_name}\n"
+    f"😍 <b>ᴜsᴇʀ ɪᴅ :</b> <code>{adder_id}</code>\n"
+    f"😘 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {adder_username}\n\n"
+    f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
 )
-            except Exception as e:
-                print(f"Logger Error (bot_added_log): {e}")
+
+try:
+    await app.send_message(
+        chat_id=config.LOGGER_ID,
+        text=text,
+        parse_mode=ParseMode.HTML,  # ✅ Enum use किया गया
+        disable_web_page_preview=True
+    )
+except Exception as e:
+    print(f"Logger Error (bot_added_log): {e}")
 #  (Ankit Event)
 @app.on_message(filters.left_chat_member, group=1)
 async def bot_removed_log(client, message: Message):
@@ -230,26 +232,28 @@ async def bot_removed_log(client, message: Message):
         remover_id = remover.id if remover else "N/A"
         remover_username = f"@{remover.username}" if remover and remover.username else "No Username"
 
-        text = (
-            f"🥺 <b>𝔹𝕠𝕥 ℝ𝕖𝕞𝕠𝕧𝕖𝕕 𝔽𝕣𝕠𝕞 𝕒 𝔾𝕣𝕠𝕦𝕡</b>\n\n"
-            f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
-            f"❤️‍🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
-            f"🔗 <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
-            f"💔 <b>ᴜsᴇʀ:</b> {remover_name}\n"
-            f"💔 <b>ᴜsᴇʀ ɪᴅ:</b> <code>{remover_id}</code>\n"
-            f"💔 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {remover_username}\n\n"
-            f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
-        )
+        from pyrogram.enums import ParseMode
 
-        try:
-            await app.send_message(
-    chat_id=config.LOGGER_ID,
-    text=text,
-    parse_mode="HTML",
-    disable_web_page_preview=True  
-            )
-        except Exception as e:
-            print(f"Logger Error (bot_removed_log): {e}")
+text = (
+    f"🥺 <b>𝔹𝕠𝕥 ℝ𝕖𝕞𝕠𝕧𝕖𝕕 𝔽𝕣𝕠𝕞 𝕒 𝔾𝕣𝕠𝕦𝕡</b>\n\n"
+    f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
+    f"❤️‍🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
+    f"🔗 <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
+    f"💔 <b>ᴜsᴇʀ:</b> {remover_name}\n"
+    f"💔 <b>ᴜsᴇʀ ɪᴅ:</b> <code>{remover_id}</code>\n"
+    f"💔 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {remover_username}\n\n"
+    f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
+)
+
+try:
+    await app.send_message(
+        chat_id=config.LOGGER_ID,
+        text=text,
+        parse_mode=ParseMode.HTML,  # ✅ Enum इस्तेमाल किया गया
+        disable_web_page_preview=True
+    )
+except Exception as e:
+    print(f"Logger Error (bot_removed_log): {e}")
 
 
 
