@@ -195,7 +195,9 @@ async def bot_added_log(client, message: Message):
             adder_name = adder.mention if adder else "Unknown"
             adder_id = adder.id if adder else "N/A"
             adder_username = f"@{adder.username}" if adder and adder.username else "No Username"
-
+            
+            from pyrogram.enums import ParseMode
+            
             text = (
                 f"😜 <b>𝐁𝐨𝐭 𝐀𝐝𝐝𝐞𝐝 𝐭𝐨 𝐚 𝐆𝐫𝐨𝐮𝐩</b>\n\n"
                 f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
@@ -252,6 +254,7 @@ async def bot_removed_log(client, message: Message):
             )
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
