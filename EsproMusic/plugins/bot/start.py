@@ -232,26 +232,26 @@ async def bot_removed_log(client, message: Message):
 
         from pyrogram.enums import ParseMode
 
-text = (
-    f"🥺 <b>𝔹𝕠𝕥 ℝ𝕖𝕞𝕠𝕧𝕖𝕕 𝔽𝕣𝕠𝕞 𝕒 𝔾𝕣𝕠𝕦𝕡</b>\n\n"
-    f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
-    f"❤️‍🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
-    f"🔗 <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
-    f"💔 <b>ᴜsᴇʀ:</b> {remover_name}\n"
-    f"💔 <b>ᴜsᴇʀ ɪᴅ:</b> <code>{remover_id}</code>\n"
-    f"💔 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {remover_username}\n\n"
-    f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
-)
+        text = (
+            f"🥺 <b>𝔹𝕠𝕥 ℝ𝕖𝕞𝕠𝕧𝕖𝕕 𝔽𝕣𝕠𝕞 𝕒 𝔾𝕣𝕠𝕦𝕡</b>\n\n"
+            f"❤️‍🔥 <b>ᴄʜᴀᴛ ɴᴀᴍᴇ:</b> {chat_title}\n"
+            f"❤️‍🔥 <b>ᴄʜᴀᴛ ɪᴅ:</b> <code>{chat_id}</code>\n"
+            f"🔗 <b>ᴄʜᴀᴛ ʟɪɴᴋ:</b> {chat_username}\n\n"
+            f"💔 <b>ᴜsᴇʀ:</b> {remover_name}\n"
+            f"💔 <b>ᴜsᴇʀ ɪᴅ:</b> <code>{remover_id}</code>\n"
+            f"💔 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {remover_username}\n\n"
+            f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
+        )
 
-try:
-     await app.send_message(
-        chat_id=config.LOGGER_ID,
-        text=text,
-        parse_mode=ParseMode.HTML,  # ✅ Enum इस्तेमाल किया गया
-        disable_web_page_preview=True
-    )
-except Exception as e:
-    print(f"Logger Error (bot_removed_log): {e}")
+        try:
+            await app.send_message(
+                chat_id=config.LOGGER_ID,
+                text=text,
+                parse_mode=ParseMode.HTML,  # ✅ Enum का सही इस्तेमाल
+                disable_web_page_preview=True
+            )
+        except Exception as e:
+            print(f"Logger Error (bot_removed_log): {e}")
 
 
 
