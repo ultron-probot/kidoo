@@ -210,7 +210,7 @@ text = (
 )
 
 try:
-    await app.send_message(
+     await app.send_message(
         chat_id=config.LOGGER_ID,
         text=text,
         parse_mode=ParseMode.HTML,  # ✅ Enum use किया गया
@@ -246,7 +246,7 @@ text = (
 )
 
 try:
-    await app.send_message(
+     await app.send_message(
         chat_id=config.LOGGER_ID,
         text=text,
         parse_mode=ParseMode.HTML,  # ✅ Enum इस्तेमाल किया गया
@@ -254,6 +254,7 @@ try:
     )
 except Exception as e:
     print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
