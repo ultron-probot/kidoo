@@ -26,7 +26,7 @@ from config import BANNED_USERS
 from strings import get_string
 
 # 🎉 Emoji list for animation
-START_EMOJIS = ["❤️", "🎉", "🔥", "👍"]
+START_EMOJIS = ["❤️", "🎉", "🔥", "👍", "🎉", "❤️‍🔥", "🥀"]
 
 # 🩵 Sticker ID (replace with your own)
 START_STICKER_ID = "CAACAgQAAxkBAAEPdj9o2EvRFqZ01s_xNklm_7B93Vys3wACIBYAAuE4MVPgVvqrgdxUTDYE"
@@ -250,6 +250,7 @@ async def bot_removed_log(client, message: Message):
             )
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
