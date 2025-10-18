@@ -19,6 +19,9 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 # API URL - here
 API_URL = getenv("API_URL", "https://tgmusic.fallenapi.fun")
 
+# API URL - here
+VIDEO_API_URL = getenv("VIDEO_API_URL", "https://tgmusic.fallenapi.fun")
+
 # API KEY - here
 API_KEY = getenv("API_KEY", "ef4e80_BwsfbD9PRZGnNH9BKLEFDpgQO_15FVjy")
 
