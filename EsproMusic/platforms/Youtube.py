@@ -84,14 +84,14 @@ class YouTubeAPI:
         # Extract first YouTube link in the message
         match = re.search(r"(https?://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[\w-]+)", text)
         if match:
-            return match.group(0)
+        return match.group(0)
         return None
-            video = data["result"][0]
-            title = video["title"]
-            duration = video.get("duration", "0:00")
-            thumbnail = video["thumbnails"][0]["url"]
-            video_id = video["id"]
-            url = f"https://www.youtube.com/watch?v={video_id}"
+                 video = data["result"][0]
+                 title = video["title"]
+                 duration = video.get("duration", "0:00")
+                 thumbnail = video["thumbnails"][0]["url"]
+                 video_id = video["id"]
+                 url = f"https://www.youtube.com/watch?v={video_id}"
 
             duration_sec = time_to_seconds(duration)
             return {
