@@ -182,4 +182,16 @@ class YouTubeAPI:
         await message.reply_text("🎧 Downloaded & Cached for Future Requests ✅")
 
         return msg.audio.file_id if stream_type == "audio" else msg.video.file_id
+        async def url(self, message):
+        """Backward compatibility for old play.py decorators"""
+        text = message.text or message.caption
+        if not text:
+            return None
+
+        # अगर user ने YouTube link दिया है तो वही return करो
+        if "youtube.com" in text or "youtu.be" in text:
+            return text.split(None, 1)[1] if " " in text else text
+
+        # नहीं तो plain search query return करो
+        return text.split(None, 1)[1] if " " in text else text
         
