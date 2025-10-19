@@ -66,16 +66,26 @@ async def check_file_size(link: str):
 # =================== MAIN YOUTUBE CLASS =================== #
 class YouTubeAPI:
     def __init__(self):
-        self.loop = asyncio.get_event_loop()
+        self.base = "https://www.youtube.com/watch?v="
+        # ... existing init code
 
-    async def search(self, query: str):
-        """🔍 Search video on YouTube and return basic info"""
-        try:
-            results = VideosSearch(query, limit=1)
-            data = await results.next()
-            if not data or not data["result"]:
-                return None
+    # ------------------ Add this method ------------------
+    async def url(self, message):
+        """Extract URL from message or reply"""
+        if message.reply_to_message:
+            msg = message.reply_to_message
+        else:
+            msg = message
 
+        text = msg.text or msg.caption
+        if not text:
+            return None
+
+        # Extract first YouTube link in the message
+        match = re.search(r"(https?://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[\w-]+)", text)
+        if match:
+            return match.group(0)
+        return None
             video = data["result"][0]
             title = video["title"]
             duration = video.get("duration", "0:00")
