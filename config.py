@@ -22,6 +22,8 @@ API_KEY = getenv("API_KEY", 'NxGBNexGenBots313fac')
 # For - downloads
 DOWNLOADS_DIR = "downloads"
 
+CACHE_GROUP_ID = int(getenv("CACHE_GROUP_ID", -1003126089699))
+
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 600))
 
 # Chat id of a group for logging bot's activities
