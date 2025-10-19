@@ -160,7 +160,7 @@ class YouTubeAPI:
         duration = info["duration"]
 
         # ✅ पहले cache check करो
-        from EsproMusic.utils.cache_system import play_request, upload_to_cache_group
+        from cache_system import play_request, upload_to_cache_group
 
         cached_file = await play_request(query, stream_type, caption, title, duration)
         if cached_file:
