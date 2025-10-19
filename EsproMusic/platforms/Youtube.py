@@ -64,7 +64,7 @@ async def check_file_size(link: str):
     return total_size or None
 
 # =================== MAIN YOUTUBE CLASS =================== #
-class YouTubeAPI:
+    class YouTubeAPI:
     def __init__(self):
         self.base = "https://www.youtube.com/watch?v="
         # ... existing init code
@@ -84,7 +84,7 @@ class YouTubeAPI:
         # Extract first YouTube link in the message
         match = re.search(r"(https?://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[\w-]+)", text)
         if match:
-        return match.group(0)
+            return match.group(0)
         return None
                  video = data["result"][0]
                  title = video["title"]
