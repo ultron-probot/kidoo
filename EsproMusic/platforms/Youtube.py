@@ -183,8 +183,8 @@ class YouTubeAPI:
 
         return msg.audio.file_id if stream_type == "audio" else msg.video.file_id
         async def url(self, message):
-        """Backward compatibility for old play.py decorators"""
-        text = message.text or message.caption
+                  """Backward compatibility for old play.py decorators"""
+                  text = message.text or message.caption
         if not text:
             return None
 
