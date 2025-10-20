@@ -12,9 +12,6 @@ from EsproMusic.plugins import ALL_MODULES
 from EsproMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
-# ✅ Import Tagger register function
-from EsproMusic.utils.tagger import register_tagger
-
 
 async def init():
     if (
