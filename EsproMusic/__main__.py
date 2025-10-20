@@ -12,6 +12,9 @@ from EsproMusic.plugins import ALL_MODULES
 from EsproMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
+# ✅ Import Tagger register function
+from EsproMusic.utils.tagger import register_tagger
+
 
 async def init():
     if (
@@ -23,34 +26,50 @@ async def init():
     ):
         LOGGER(__name__).error("Assistant client variables not defined, exiting...")
         exit()
+
     await sudo()
+
     try:
         users = await get_gbanned()
         for user_id in users:
             BANNED_USERS.add(user_id)
+
         users = await get_banned_users()
         for user_id in users:
             BANNED_USERS.add(user_id)
-    except:
-        pass
+    except Exception as e:
+        LOGGER("EsproMusic").warning(f"Error while fetching banned users: {e}")
+
     await app.start()
+
+    # ✅ Register tagger feature (add this line)
+    register_tagger(app, SUDO_USERS=set())
+
+    # ✅ Load all bot plugins
     for all_module in ALL_MODULES:
-        importlib.import_module("EsproMusic.plugins" + all_module)
+        importlib.import_module("EsproMusic.plugins." + all_module)
     LOGGER("EsproMusic.plugins").info("Successfully Imported Modules...")
+
     await userbot.start()
     await Loy.start()
+
     try:
         await Loy.stream_call("https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4")
     except NoActiveGroupCall:
         LOGGER("EsproMusic").error(
-            "Please turn on the videochat of your log group\channel.\n\nStopping Bot..."
+            "Please turn on the videochat of your log group/channel.\n\nStopping Bot..."
         )
         exit()
-    except:
-        pass
+    except Exception as e:
+        LOGGER("EsproMusic").warning(f"Error during call stream: {e}")
+
     await Loy.decorators()
-    LOGGER("EsproMusic").info("EsproMusicBot Started Successfully \n\n Yaha App ko nahi aana hai aapni hf jo bhej sakte hai @Esprosupport ")
+    LOGGER("EsproMusic").info(
+        "✅ DevilMusicBot Started Successfully with Tagger System\nSupport: @KomalMusicUpdate"
+    )
+
     await idle()
+
     await app.stop()
     await userbot.stop()
     LOGGER("EsproMusic").info("Stopping Espro Music Bot...")
