@@ -5,6 +5,8 @@ import config
 
 from ..logging import LOGGER
 
+from EsproMusic.modules.tagger import register_tagger
+
 
 class Loy(Client):
     def __init__(self):
