@@ -12,8 +12,12 @@ from EsproMusic.plugins import ALL_MODULES
 from EsproMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
+# ✅ Tagger module import
+from EsproMusic.modules.tagger import register_tagger
+
 
 async def init():
+    # ✅ Check assistant string vars
     if (
         not config.STRING1
         and not config.STRING2
@@ -26,6 +30,7 @@ async def init():
 
     await sudo()
 
+    # ✅ Fetch banned users
     try:
         users = await get_gbanned()
         for user_id in users:
@@ -37,19 +42,22 @@ async def init():
     except Exception as e:
         LOGGER("EsproMusic").warning(f"Error while fetching banned users: {e}")
 
+    # ✅ Start main bot
     await app.start()
 
-    # ✅ Register tagger feature (add this line)
+    # ✅ Register Tagger feature
     register_tagger(app, SUDO_USERS=set())
 
-    # ✅ Load all bot plugins
+    # ✅ Load all plugins dynamically
     for all_module in ALL_MODULES:
         importlib.import_module("EsproMusic.plugins." + all_module)
     LOGGER("EsproMusic.plugins").info("Successfully Imported Modules...")
 
+    # ✅ Start userbot and main call client
     await userbot.start()
     await Loy.start()
 
+    # ✅ Test audio stream (used to keep voice chat active)
     try:
         await Loy.stream_call("https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4")
     except NoActiveGroupCall:
@@ -62,11 +70,13 @@ async def init():
 
     await Loy.decorators()
     LOGGER("EsproMusic").info(
-        "✅ DevilMusicBot Started Successfully with Tagger System\nSupport: @KomalMusicUpdate"
+        "✅ EsproMusic Bot Started Successfully with Tagger System\nSupport: @KomalMusicUpdate"
     )
 
+    # ✅ Keep bot running
     await idle()
 
+    # ✅ Cleanup when stopped
     await app.stop()
     await userbot.stop()
     LOGGER("EsproMusic").info("Stopping Espro Music Bot...")
