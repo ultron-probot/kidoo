@@ -9,7 +9,7 @@ from EsproMusic.core.call import Loy
 from EsproMusic.misc import sudo
 from EsproMusic.plugins import ALL_MODULES
 from EsproMusic.utils.database import get_banned_users, get_gbanned
-from EsproMusic.modules.tagger import register_tagger  # ✅ Added import
+from EsproMusic.modules.tagger import register_tagger  # ✅ Tagger import
 from config import BANNED_USERS
 
 
@@ -21,7 +21,7 @@ async def init():
 
     await sudo()
 
-    # 🔹 Banned user loading
+    # 🔹 Load banned users
     try:
         for user_id in await get_gbanned():
             BANNED_USERS.add(user_id)
@@ -33,8 +33,8 @@ async def init():
     # 🔹 Start Pyrogram app
     await app.start()
 
-    # 🔹 Register Tagger feature
-    register_tagger(app, SUDO_USERS=set())
+    # 🔹 Register Tagger feature (without SUDO_USERS)
+    register_tagger(app)
 
     # 🔹 Import all plugin modules safely
     for all_module in ALL_MODULES:
@@ -50,7 +50,7 @@ async def init():
     await userbot.start()
     await Loy.start()
 
-    # 🔹 Stream test audio to verify call
+    # 🔹 Stream test audio/video
     try:
         await Loy.stream_call("https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4")
     except NoActiveGroupCall:
