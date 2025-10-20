@@ -17,6 +17,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, User
 from pyrogram.errors import RPCError
 
+import config  # Our config with SUDO_USERS
 
 # Active tagging trackers
 _active_taggers: Dict[int, asyncio.Event] = {}
@@ -35,13 +36,13 @@ def is_admin_or_sudo(client: Client, chat_id: int, user_id: int, SUDO_USERS: Opt
 
 
 def mention(user: User) -> str:
-    """Generate mention text."""
+    """Generate mention text for Telegram markdown."""
     name = (user.first_name or "User").replace("@", "")
     return f"[{name}](tg://user?id={user.id})"
 
 
 async def _gather_members(client: Client, chat_id: int) -> List[User]:
-    """Collect group members (excluding bots)."""
+    """Collect all group members except bots."""
     members: List[User] = []
     try:
         async for m in client.get_chat_members(chat_id):
@@ -53,7 +54,7 @@ async def _gather_members(client: Client, chat_id: int) -> List[User]:
 
 
 async def _send_batch_messages(client: Client, chat_id: int, batches: List[List[User]], base_text: str, status_message: Message, delay: float):
-    """Send messages in batches of 5 users with delay."""
+    """Send messages in batches of `batch_size` with delay."""
     total = sum(len(b) for b in batches)
     done = 0
 
@@ -67,7 +68,7 @@ async def _send_batch_messages(client: Client, chat_id: int, batches: List[List[
         try:
             await client.send_message(chat_id, f"{base_text}\n\n{mentions}", disable_web_page_preview=True)
         except RPCError:
-            # Fallback: tag one by one if group flood limit reached
+            # Fallback: send individually if flood limit hits
             for u in batch:
                 try:
                     await client.send_message(chat_id, f"{base_text}\n\n{mention(u)}", disable_web_page_preview=True)
@@ -89,7 +90,9 @@ async def _send_batch_messages(client: Client, chat_id: int, batches: List[List[
 
 
 def register_tagger(app: Client, SUDO_USERS: Optional[Set[int]] = None, batch_size: int = 5, delay: float = 1.0):
-    """Register all tagger handlers."""
+    """Register all tagger commands."""
+
+    SUDO_USERS = SUDO_USERS or config.SUDO_USERS
 
     @app.on_message(filters.command("tagall") & filters.group)
     async def cmd_tagall(client: Client, message: Message):
@@ -98,17 +101,14 @@ def register_tagger(app: Client, SUDO_USERS: Optional[Set[int]] = None, batch_si
         if not from_user:
             return
 
-        # Check permission
         if not is_admin_or_sudo(client, chat_id, from_user.id, SUDO_USERS):
             await message.reply_text("❌ केवल Admins या Sudo यूज़र्स इस कमांड का उपयोग कर सकते हैं।")
             return
 
-        # Prevent duplicate tagging
         if chat_id in _active_locks and _active_locks[chat_id].locked():
             await message.reply_text("⚠️ पहले से एक टैगिंग प्रक्रिया चल रही है। /tagoff से रोकें।")
             return
 
-        # Message text
         if len(message.command) > 1:
             base_text = message.text.split(None, 1)[1]
         elif message.reply_to_message and message.reply_to_message.text:
@@ -143,9 +143,10 @@ def register_tagger(app: Client, SUDO_USERS: Optional[Set[int]] = None, batch_si
     # Fancy natural trigger
     @app.on_message(filters.group & filters.regex(r'(?i)^alltag\s+kero\s+bot\b'))
     async def fancy_trigger(client: Client, message: Message):
-        if not message.from_user:
+        from_user = message.from_user
+        if not from_user:
             return
-        if not is_admin_or_sudo(client, message.chat.id, message.from_user.id, SUDO_USERS):
+        if not is_admin_or_sudo(client, message.chat.id, from_user.id, SUDO_USERS):
             return
         await cmd_tagall(client, message)
 
