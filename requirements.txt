@@ -21,7 +21,7 @@ speedtest-cli
 spotipy
 tgcrypto
 unidecode
-yt-dlp
+yt-dlp>=2025.10.18
 youtube-search
 youtube-search-python
 pyrogram==2.0.105   # ✅ emoji reaction compatible
