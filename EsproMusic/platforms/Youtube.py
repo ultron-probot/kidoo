@@ -1,25 +1,22 @@
 import asyncio
 import os
-import random
 import re
-from pathlib import Path
-from typing import Union, Optional
-
+import json
+from typing import Union
+import requests
 import yt_dlp
-from pyrogram import errors
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
-
-from EsproMusic.logging import LOGGER
-from EsproMusic.platforms._httpx import HttpxClient
 from EsproMusic.utils.database import is_on_off
 from EsproMusic.utils.formatters import time_to_seconds
-
 import os
 import glob
 import random
 import logging
+import aiohttp
+import config
+
 from os import getenv
 
 API_URL = getenv("API_URL", 'https://pytdbotapi.thequickearn.xyz')
@@ -480,4 +477,4 @@ class YouTubeAPI:
             direct = True
             downloaded_file = await download_song(link)
         return downloaded_file, direct
-    
+                                    
