@@ -1,15 +1,73 @@
-import asyncio, httpx, os, re, yt_dlp
+import asyncio
+import os
+import random
+import re
+from pathlib import Path
+from typing import Union, Optional
 
-from typing import Union
-from pyrogram.types import Message
+import yt_dlp
+from pyrogram import errors
 from pyrogram.enums import MessageEntityType
+from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 
+from EsproMusic.logging import LOGGER
+from EsproMusic.platforms._httpx import HttpxClient
+from EsproMusic.utils.database import is_on_off
+from EsproMusic.utils.formatters import time_to_seconds
 
-def time_to_seconds(time):
-    stringt = str(time)
-    return sum(int(x) * 60**i for i, x in enumerate(reversed(stringt.split(":"))))
+import os
+import glob
+import random
+import logging
 
+def cookie_txt_file():
+    folder_path = f"{os.getcwd()}/cookies"
+    filename = f"{os.getcwd()}/cookies/logs.csv"
+    txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
+    if not txt_files:
+        raise FileNotFoundError("No .txt files found in the specified folder.")
+    cookie_txt_file = random.choice(txt_files)
+    with open(filename, 'a') as file:
+        file.write(f'Choosen File : {cookie_txt_file}\n')
+    return f"""cookies/{str(cookie_txt_file).split("/")[-1]}"""
+
+
+
+async def check_file_size(link):
+    async def get_format_info(link):
+        proc = await asyncio.create_subprocess_exec(
+            "yt-dlp",
+            "--cookies", cookie_txt_file(),
+            "-J",
+            link,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            print(f'Error:\n{stderr.decode()}')
+            return None
+        return json.loads(stdout.decode())
+
+    def parse_size(formats):
+        total_size = 0
+        for format in formats:
+            if 'filesize' in format:
+                total_size += format['filesize']
+        return total_size
+
+    info = await get_format_info(link)
+    if info is None:
+        return None
+    
+    formats = info.get('formats', [])
+    if not formats:
+        print("No formats found.")
+        return None
+    
+    total_size = parse_size(formats)
+    return total_size
 
 async def shell_cmd(cmd):
     proc = await asyncio.create_subprocess_shell(
@@ -24,52 +82,6 @@ async def shell_cmd(cmd):
         else:
             return errorz.decode("utf-8")
     return out.decode("utf-8")
-
-async def get_stream_url(query, video=False):
-    """
-    Updated function for NottyAPI YouTube API with Telegram caching support
-    Compatible with response format:
-    {
-        "url": "...",
-        "filename": "...",
-        "status": "success",
-        "cached": true,
-        "response_time": "0.00s"
-    }
-    """
-    
-    # 🔹 Your FastAPI server (NottyAPI)
-    api_base = "https://nottyapi-254bfd1a99f5.herokuapp.com"
-    api_key = "YDApAtNoG3-RGGC8pD3uJm_kQ9SJ2Bfi1x6NufcuTBI"
-    
-    # 🔹 Endpoint selection (ytmp3 or ytmp4)
-    endpoint = "/ytmp4" if video else "/ytmp3"
-    api_url = f"{api_base}{endpoint}"
-
-    async with httpx.AsyncClient(timeout=120) as client:
-        params = {"url": query, "api_key": api_key}
-        try:
-            response = await client.get(api_url, params=params)
-            
-            # 🔸 Check for valid HTTP response
-            if response.status_code != 200:
-                print(f"❌ HTTP Error: {response.status_code}")
-                return ""
-            
-            data = response.json()
-            
-            # 🔸 Handle NottyAPI style response
-            if data.get("status") == "success" and data.get("url"):
-                print(f"✅ Stream URL fetched successfully: {data['url']}")
-                return data["url"]
-            
-            # 🔸 Optional debug info
-            print(f"⚠️ Unexpected API response: {data}")
-            return ""
-
-        except Exception as e:
-            print(f"💥 Error calling NottyAPI: {e}")
-            return ""
 
 
 class YouTubeAPI:
@@ -160,26 +172,25 @@ class YouTubeAPI:
         return thumbnail
 
     async def video(self, link: str, videoid: Union[bool, str] = None):
-        """
-        Updated to use our integrated API for video streaming
-        """
         if videoid:
             link = self.base + link
         if "&" in link:
             link = link.split("&")[0]
-            
-        return await get_stream_url(link, True)
-        
-    async def audio(self, link: str, videoid: Union[bool, str] = None):
-        """
-        New method to get audio stream URL using our integrated API
-        """
-        if videoid:
-            link = self.base + link
-        if "&" in link:
-            link = link.split("&")[0]
-            
-        return await get_stream_url(link, False)
+        proc = await asyncio.create_subprocess_exec(
+            "yt-dlp",
+            "--cookies",cookie_txt_file(),
+            "-g",
+            "-f",
+            "best[height<=?720][width<=?1280]",
+            f"{link}",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await proc.communicate()
+        if stdout:
+            return 1, stdout.decode().split("\n")[0]
+        else:
+            return 0, stderr.decode()
 
     async def playlist(self, link, limit, user_id, videoid: Union[bool, str] = None):
         if videoid:
@@ -187,7 +198,7 @@ class YouTubeAPI:
         if "&" in link:
             link = link.split("&")[0]
         playlist = await shell_cmd(
-            f"yt-dlp -i --get-id --flat-playlist --playlist-end {limit} --skip-download {link}"
+            f"yt-dlp -i --get-id --flat-playlist --cookies {cookie_txt_file()} --playlist-end {limit} --skip-download {link}"
         )
         try:
             result = playlist.split("\n")
@@ -224,7 +235,7 @@ class YouTubeAPI:
             link = self.base + link
         if "&" in link:
             link = link.split("&")[0]
-        ytdl_opts = {"quiet": True}
+        ytdl_opts = {"quiet": True, "cookiefile" : cookie_txt_file()}
         ydl = yt_dlp.YoutubeDL(ytdl_opts)
         with ydl:
             formats_available = []
@@ -284,23 +295,9 @@ class YouTubeAPI:
         format_id: Union[bool, str] = None,
         title: Union[bool, str] = None,
     ) -> str:
-        """
-        Updated download method to use our integrated API instead of yt-dlp
-        """
         if videoid:
             link = self.base + link
-            
-        # For simple audio/video downloads, use our API
-        if video and not songvideo:
-            downloaded_file = await get_stream_url(link, True)
-            return downloaded_file, None
-        elif not video and not songaudio:
-            downloaded_file = await get_stream_url(link, False)
-            return downloaded_file, None
-        
-        # For specific format downloads, fall back to original yt-dlp method
         loop = asyncio.get_running_loop()
-
         def audio_dl():
             ydl_optssx = {
                 "format": "bestaudio/best",
@@ -308,6 +305,7 @@ class YouTubeAPI:
                 "geo_bypass": True,
                 "nocheckcertificate": True,
                 "quiet": True,
+                "cookiefile" : cookie_txt_file(),
                 "no_warnings": True,
             }
             x = yt_dlp.YoutubeDL(ydl_optssx)
@@ -325,6 +323,7 @@ class YouTubeAPI:
                 "geo_bypass": True,
                 "nocheckcertificate": True,
                 "quiet": True,
+                "cookiefile" : cookie_txt_file(),
                 "no_warnings": True,
             }
             x = yt_dlp.YoutubeDL(ydl_optssx)
@@ -345,6 +344,7 @@ class YouTubeAPI:
                 "nocheckcertificate": True,
                 "quiet": True,
                 "no_warnings": True,
+                "cookiefile" : cookie_txt_file(),
                 "prefer_ffmpeg": True,
                 "merge_output_format": "mp4",
             }
@@ -360,6 +360,7 @@ class YouTubeAPI:
                 "nocheckcertificate": True,
                 "quiet": True,
                 "no_warnings": True,
+                "cookiefile" : cookie_txt_file(),
                 "prefer_ffmpeg": True,
                 "postprocessors": [
                     {
@@ -381,10 +382,37 @@ class YouTubeAPI:
             fpath = f"downloads/{title}.mp3"
             return fpath
         elif video:
-            downloaded_file = await loop.run_in_executor(None, video_dl)
-            direct = None
+            if await is_on_off(1):
+                direct = True
+                downloaded_file = await loop.run_in_executor(None, video_dl)
+            else:
+                proc = await asyncio.create_subprocess_exec(
+                    "yt-dlp",
+                    "--cookies",cookie_txt_file(),
+                    "-g",
+                    "-f",
+                    "best[height<=?720][width<=?1280]",
+                    f"{link}",
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                )
+                stdout, stderr = await proc.communicate()
+                if stdout:
+                    downloaded_file = stdout.decode().split("\n")[0]
+                    direct = False
+                else:
+                   file_size = await check_file_size(link)
+                   if not file_size:
+                     print("None file Size")
+                     return
+                   total_size_mb = file_size / (1024 * 1024)
+                   if total_size_mb > 250:
+                     print(f"File size {total_size_mb:.2f} MB exceeds the 100MB limit.")
+                     return None
+                   direct = True
+                   downloaded_file = await loop.run_in_executor(None, video_dl)
         else:
+            direct = True
             downloaded_file = await loop.run_in_executor(None, audio_dl)
-            direct = None
         return downloaded_file, direct
-            
+        
