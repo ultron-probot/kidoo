@@ -206,7 +206,7 @@ async def bot_added_log(client, message: Message):
                 f"🎉 <b>ᴜsᴇʀ :</b> {adder_name}\n"
                 f"😍 <b>ᴜsᴇʀ ɪᴅ :</b> <code>{adder_id}</code>\n"
                 f"😘 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {adder_username}\n\n"
-                f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
+                f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/Ankitgupta214'>•𝐃𝐞𝐯𝐢𝐥 𝐁𝐨𝐬𝐬</a>"
             )
 
             try:
@@ -242,7 +242,7 @@ async def bot_removed_log(client, message: Message):
             f"💔 <b>ᴜsᴇʀ:</b> {remover_name}\n"
             f"💔 <b>ᴜsᴇʀ ɪᴅ:</b> <code>{remover_id}</code>\n"
             f"💔 <b>ᴜsᴇʀ ɴᴀᴍᴇ:</b> {remover_username}\n\n"
-            f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/GonnaAgree'>𝜻 • 𝐊 ᴀ ʀ ᴛ ɪ ᴋ</a>"
+            f"🥂 <b>𝐂𝐫𝐞𝐚𝐭𝐨𝐫:-</b> <a href='https://t.me/Ankitgupta214'>•𝐃𝐞𝐯𝐢𝐥 𝐁𝐨𝐬𝐬</a>"
         )
 
         try:
@@ -254,6 +254,7 @@ async def bot_removed_log(client, message: Message):
             )
         except Exception as e:
             print(f"Logger Error (bot_removed_log): {e}")
+
 
 
 
