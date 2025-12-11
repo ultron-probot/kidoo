@@ -123,21 +123,145 @@ async def _generate_image_for_user(
     return out_path
 
 
-INFO_TEXT = """**
+# ---------------------------
+# Random caption templates
+# ---------------------------
+_INFO_TEMPLATES = [
+    """**
 ❅─────✧❅✦❅✧─────❅
             ✦ ᴜsᴇʀ ɪɴғᴏ ✦
 
-➻ ᴜsᴇʀ ɪᴅ ‣ **`{}`
-**➻ ғɪʀsᴛ ɴᴀᴍᴇ ‣ **{}
-**➻ ʟᴀsᴛ ɴᴀᴍᴇ ‣ **{}
-**➻ ᴜsᴇʀɴᴀᴍᴇ ‣ **`{}`
-**➻ ᴍᴇɴᴛɪᴏɴ ‣ **{}
-**➻ ʟᴀsᴛ sᴇᴇɴ ‣ **{}
-**➻ ᴅᴄ ɪᴅ ‣ **{}
-**➻ ʙɪᴏ ‣ **`{}`
+➻ ᴜsᴇʀ ɪᴅ ‣ **`{id}`**
+**➻ ғɪʀsᴛ ɴᴀᴍᴇ ‣ **{first}
+**➻ ʟᴀsᴛ ɴᴀᴍᴇ ‣ **{last}
+**➻ ᴜsᴇʀɴᴀᴍᴇ ‣ **`{username}`
+**➻ ᴍᴇɴᴛɪᴏɴ ‣ **{mention}
+**➻ ʟᴀsᴛ sᴇᴇɴ ‣ **{status}
+**➻ ᴅᴄ ɪᴅ ‣ **{dc}
+**➻ ʙɪᴏ ‣ **`{bio}`
 
 **❅─────✧❅✦❅✧─────❅**
+""",
+    """╔══❀•°❀°•❀══╗
+      𝙐𝙎𝙀𝙍 𝙄𝙉𝙁𝙊
+╚══❀•°❀°•❀══╝
+
+• 𝐔𝐬𝐞𝐫 𝐈𝐃 » `{id}`
+• 𝐅𝐢𝐫𝐬𝐭 𝐍𝐚𝐦𝐞 » {first}
+• 𝐋𝐚𝐬𝐭 𝐍𝐚𝐦𝐞 » {last}
+• 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 » `{username}`
+• 𝐌𝐞𝐧𝐭𝐢𝐨𝐧 » {mention}
+• 𝐋𝐚𝐬𝐭 𝐒𝐞𝐞𝐧 » {status}
+• 𝐃𝐂 𝐈𝐃 » {dc}
+• 𝐁𝐢𝐨 » `{bio}`
+
+╔══❀•°❀°•❀══╗
+""",
+    """┌────────────────────┐
+       ＵＳＥＲ ＩＮＦＯ
+└────────────────────┘
+
+> User ID: `{id}`
+> First Name: {first}
+> Last Name: {last}
+> Username: `{username}`
+> Mention: {mention}
+> Last Seen: {status}
+> DC ID: {dc}
+> Bio: `{bio}`
+
+┌────────────────────┐
+""",
+    """🌸───・✧ ✦ ✧・───🌸
+          ᴜsᴇʀ ᴘʀᴏꜰɪʟᴇ
+🌸───・✧ ✦ ✧・───🌸
+
+🔹 ɪᴅ: `{id}`
+🔹 ꜰɪʀꜱᴛ ɴᴀᴍᴇ: {first}
+🔹 ʟᴀꜱᴛ ɴᴀᴍᴇ: {last}
+🔹 ᴜsᴇʀɴᴀᴍᴇ: `{username}`
+🔹 ᴍᴇɴᴛɪᴏɴ: {mention}
+🔹 ʟᴀsᴛ sᴇᴇɴ: {status}
+🔹 ᴅᴄ ɪᴅ: {dc}
+🔹 ʙɪᴏ: `{bio}`
+
+🌸───・✧ ✦ ✧・───🌸
+""",
+    """✧･ﾟ: *✧･ﾟ:*  𝐔𝐒𝐄𝐑 𝐈𝐍𝐅𝐎  *:･ﾟ✧*:･ﾟ✧
+
+➤ User ID » `{id}`
+➤ First Name » {first}
+➤ Last Name » {last}
+➤ Username » `{username}`
+➤ Mention » {mention}
+➤ Last Seen » {status}
+➤ DC ID » {dc}
+➤ Bio » `{bio}`
+
+✧･ﾟ: *✧･ﾟ:* ✧*:･ﾟ✧*:･ﾟ✧
+""",
+    """┏━━━━ User Info ━━━━┓
+
+• ID: `{id}`
+• First: {first}
+• Last: {last}
+• Username: `{username}`
+• Mention: {mention}
+• Last Seen: {status}
+• DC ID: {dc}
+• Bio: `{bio}`
+
+┗━━━━━━━━━━━━━━━━━━┛
+""",
+    """✦••┈┈••✦ 𝐑𝐎𝐘𝐀𝐋 𝐔𝐒𝐄𝐑 𝐈𝐍𝐅𝐎 ✦••┈┈••✦
+
+👑 ID: `{id}`
+👑 First Name: {first}
+👑 Last Name: {last}
+👑 Username: `{username}`
+👑 Mention: {mention}
+👑 Last Seen: {status}
+👑 DC ID: {dc}
+👑 Bio: `{bio}`
+
+✦••┈┈••✦
 """
+]
+
+
+def get_random_info_caption(
+    id: Union[int, str],
+    first: str,
+    last: str,
+    username: str,
+    mention: str,
+    status: str,
+    dc: Union[int, str],
+    bio: str,
+) -> str:
+    """
+    Selects random template and formats it with provided fields.
+    """
+    tpl = random.choice(_INFO_TEMPLATES)
+    # sanitize None -> nice default
+    first = first or "No first name"
+    last = last or "No last name"
+    username = username or "No Username"
+    mention = mention or f"[{first}](tg://user?id={id})"
+    status = status or "Unknown"
+    dc = dc or "N/A"
+    bio = bio or "No bio set"
+
+    return tpl.format(
+        id=str(id),
+        first=str(first),
+        last=str(last),
+        username=str(username),
+        mention=str(mention),
+        status=str(status),
+        dc=str(dc),
+        bio=str(bio),
+    )
 
 
 async def _user_status_text(user_id: int) -> str:
@@ -224,7 +348,7 @@ async def devil_userinfo_handler(_, message: Message):
         generated_img = await _generate_image_for_user(uid, profile_path=profile_local)
 
         # send the image (if local). If generation failed, fallback to sending a remote random image + caption
-        caption = INFO_TEXT.format(uid, first_name, last_name, username, mention, status_text, dc_id, bio)
+        caption = get_random_info_caption(uid, first_name, last_name, username, mention, status_text, dc_id, bio)
         if generated_img and os.path.exists(generated_img):
             await app.send_photo(message.chat.id, photo=generated_img, caption=caption, reply_to_message_id=message.id)
         else:
