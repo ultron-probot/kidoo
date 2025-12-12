@@ -4,10 +4,10 @@ import re
 import json
 from typing import Union
 import requests
-import py_yt 
+from youtubesearchpython
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
-from py_yt import VideosSearch
+from youtubesearchpython import VideosSearch
 from EsproMusic.utils.database import is_on_off
 from EsproMusic.utils.formatters import time_to_seconds
 import os
@@ -596,4 +596,5 @@ class YouTubeAPI:
             direct = True
             downloaded_file = await download_song(link)
         return downloaded_file, direct
+
 
