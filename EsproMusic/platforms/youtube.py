@@ -4,7 +4,7 @@ import re
 import json
 from typing import Union
 import requests
-from youtubesearchpython
+import youtubesearchpython
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython import VideosSearch
@@ -596,5 +596,6 @@ class YouTubeAPI:
             direct = True
             downloaded_file = await download_song(link)
         return downloaded_file, direct
+
 
 
