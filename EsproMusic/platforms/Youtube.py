@@ -33,57 +33,76 @@ def cookie_txt_file():
     return os.path.join(cookie_dir, random.choice(files))
 
 
+async def search_to_link(query: str):
+    search = VideosSearch(query, limit=1)
+    result = (await search.next()).get("result")
+    if not result:
+        return None
+    return result[0]["link"]
+
+
 # ================= DOWNLOAD HELPERS =================
 
 async def download_song(link: str):
+    # 🔥 SONG NAME → YT LINK
+    if not link.startswith("http"):
+        link = await search_to_link(link)
+        if not link:
+            return None
+
     video_id = link.split("v=")[-1].split("&")[0]
-    download_folder = "downloads"
-    os.makedirs(download_folder, exist_ok=True)
+    os.makedirs("downloads", exist_ok=True)
 
+    # Already exists
     for ext in ["mp3", "m4a", "webm"]:
-        file_path = f"{download_folder}/{video_id}.{ext}"
-        if os.path.exists(file_path):
-            return file_path
+        path = f"downloads/{video_id}.{ext}"
+        if os.path.exists(path):
+            return path
 
-    url = f"{API_URL}/song/{video_id}?api={API_KEY}"
+    # ✅ API FIRST (unchanged behavior)
+    api_url = f"{API_URL}/song/{video_id}?api={API_KEY}"
     async with aiohttp.ClientSession() as session:
-        async with session.get(url) as r:
+        async with session.get(api_url) as r:
             if r.status != 200:
                 return None
             data = await r.json()
-            link = data.get("link")
-            if not link:
+            dl = data.get("link")
+            if not dl:
                 return None
 
-        async with session.get(link) as f:
-            path = f"{download_folder}/{video_id}.mp3"
+        async with session.get(dl) as f:
+            path = f"downloads/{video_id}.mp3"
             with open(path, "wb") as w:
                 w.write(await f.read())
             return path
 
 
 async def download_video(link: str):
+    if not link.startswith("http"):
+        link = await search_to_link(link)
+        if not link:
+            return None
+
     video_id = link.split("v=")[-1].split("&")[0]
-    download_folder = "downloads"
-    os.makedirs(download_folder, exist_ok=True)
+    os.makedirs("downloads", exist_ok=True)
 
     for ext in ["mp4", "webm", "mkv"]:
-        file_path = f"{download_folder}/{video_id}.{ext}"
-        if os.path.exists(file_path):
-            return file_path
+        path = f"downloads/{video_id}.{ext}"
+        if os.path.exists(path):
+            return path
 
-    url = f"{VIDEO_API_URL}/video/{video_id}?api={API_KEY}"
+    api_url = f"{VIDEO_API_URL}/video/{video_id}?api={API_KEY}"
     async with aiohttp.ClientSession() as session:
-        async with session.get(url) as r:
+        async with session.get(api_url) as r:
             if r.status != 200:
                 return None
             data = await r.json()
-            link = data.get("link")
-            if not link:
+            dl = data.get("link")
+            if not dl:
                 return None
 
-        async with session.get(link) as f:
-            path = f"{download_folder}/{video_id}.mp4"
+        async with session.get(dl) as f:
+            path = f"downloads/{video_id}.mp4"
             with open(path, "wb") as w:
                 w.write(await f.read())
             return path
@@ -114,9 +133,8 @@ class YouTubeAPI:
         return None
 
     async def details(self, link: str, videoid=False):
-        if videoid:
-            link = self.base + link
-        link = link.split("&")[0]
+        if not link.startswith("http"):
+            link = await search_to_link(link)
         r = VideosSearch(link, limit=1)
         res = (await r.next())["result"][0]
         dur = res["duration"]
@@ -129,20 +147,12 @@ class YouTubeAPI:
         )
 
     async def video(self, link: str, videoid=False):
-        if videoid:
-            link = self.base + link
-        link = link.split("&")[0]
-
         file = await download_video(link)
         if file:
             return 1, file
 
         cookie = cookie_txt_file()
-        opts = {
-            "format": "best[height<=720]",
-            "quiet": True,
-            "no_warnings": True,
-        }
+        opts = {"format": "best[height<=720]", "quiet": True}
         if cookie:
             opts["cookiefile"] = cookie
 
@@ -151,26 +161,18 @@ class YouTubeAPI:
         return 1, info["url"]
 
     async def playlist(self, link, limit, user_id, videoid=False):
-        if videoid:
-            link = self.listbase + link
-        link = link.split("&")[0]
-
-        cookie = cookie_txt_file()
+        if not link.startswith("http"):
+            return []
         cmd = f"yt-dlp -i --flat-playlist --get-id --playlist-end {limit} {link}"
-        if cookie:
-            cmd += f" --cookies {cookie}"
-
         proc = await asyncio.create_subprocess_shell(
-            cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+            cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
         out, _ = await proc.communicate()
         return [i for i in out.decode().split("\n") if i]
 
     async def track(self, link: str, videoid=False):
-        if videoid:
-            link = self.base + link
+        if not link.startswith("http"):
+            link = await search_to_link(link)
         r = VideosSearch(link, limit=1)
         res = (await r.next())["result"][0]
         return {
@@ -182,15 +184,11 @@ class YouTubeAPI:
         }, res["id"]
 
     async def download(self, link: str, mystic, video=False, videoid=False):
-        if videoid:
-            link = self.base + link
-
         cookie = cookie_txt_file()
         opts = {
             "format": "bestaudio/best" if not video else "bestvideo+bestaudio",
             "outtmpl": "downloads/%(id)s.%(ext)s",
             "quiet": True,
-            "no_warnings": True,
         }
         if cookie:
             opts["cookiefile"] = cookie
