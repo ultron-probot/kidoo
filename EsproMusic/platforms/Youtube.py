@@ -171,11 +171,42 @@ class YouTubeAPI:
         out, _ = await proc.communicate()
         return [i for i in out.decode().split("\n") if i]
 
-    async def download(self, link: str, mystic, video=False, videoid=False):
-        # 🔥 API STREAM FIRST
-        stream = await (api_video_stream(link) if video else api_song_stream(link))
-        if stream:
-            return stream
+    async def download_song(link: str):
+    from youtubesearchpython import VideosSearch
+    import aiohttp, os
+
+    # 🔹 Song name → YouTube link
+    if not link.startswith("http"):
+        search = VideosSearch(link, limit=1)
+        result = (await search.next()).get("result")
+        if not result:
+            return None
+        link = result[0]["link"]
+
+    video_id = link.split("v=")[-1].split("&")[0]
+    os.makedirs("downloads", exist_ok=True)
+
+    api_url = f"{API_URL}/song/{video_id}?api={API_KEY}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(api_url) as r:
+            if r.status != 200:
+                return None
+            data = await r.json()
+
+        stream_url = data.get("link")
+        if not stream_url:
+            return None
+
+        # 🔥 STREAM → TEMP FILE (THIS IS THE FIX)
+        file_path = f"downloads/{video_id}.mp3"
+        async with session.get(stream_url) as audio:
+            with open(file_path, "wb") as f:
+                async for chunk in audio.content.iter_chunked(1024 * 64):
+                    f.write(chunk)
+
+        return file_path
 
         # 🔁 FALLBACK
         return ytdlp_stream(link, video=video)
+
