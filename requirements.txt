@@ -23,5 +23,5 @@ tgcrypto
 unidecode
 yt-dlp>=2024.12.01
 youtube-search
-youtube-search-python
+youtubesearchpython
 pyrogram==2.0.105   # ✅ emoji reaction compatible
