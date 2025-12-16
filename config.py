@@ -15,16 +15,15 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
+
 # API URL - here
 API_URL = getenv("API_URL", 'https://api.thequickearn.xyz') #youtube song url
 VIDEO_API_URL = getenv("VIDEO_API_URL", 'https://api.video.thequickearn.xyz')
-API_KEY = getenv("30DxNexGenBots71dc22") # youtube song api key, generate free key or buy paid plan from panel.thequickearn.xyz
-
+API_KEY = getenv("API_KEY", '30DxNexGenBots71dc22') # youtube song api key, generate free key or buy paid plan from panel.thequickearn.xyz
 
 # For - downloads
 DOWNLOADS_DIR = "downloads"
 
-CACHE_GROUP_ID = int(getenv("CACHE_GROUP_ID", -1001234567890))
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 600))
 
