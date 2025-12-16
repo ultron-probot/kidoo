@@ -170,8 +170,7 @@ class YouTubeAPI:
         )
         out, _ = await proc.communicate()
         return [i for i in out.decode().split("\n") if i]
-
-    async def download_song(link: str):
+   async def download_song(link: str):
     from youtubesearchpython import VideosSearch
     import aiohttp, os
 
@@ -209,4 +208,5 @@ class YouTubeAPI:
 
         # 🔁 FALLBACK
         return ytdlp_stream(link, video=video)
+
 
