@@ -1,7 +1,6 @@
 import asyncio
 import os
 import re
-import json
 import random
 from typing import Union
 
@@ -15,7 +14,7 @@ from EsproMusic.utils.formatters import time_to_seconds
 from config import API_URL, VIDEO_API_URL, API_KEY
 
 
-# ================= HELPERS =================
+# ================= BASIC HELPERS =================
 
 def yt_query(q: str):
     if q.startswith("http"):
@@ -35,80 +34,72 @@ def cookie_txt_file():
 
 async def search_to_link(query: str):
     search = VideosSearch(query, limit=1)
-    result = (await search.next()).get("result")
-    if not result:
+    res = (await search.next()).get("result")
+    if not res:
         return None
-    return result[0]["link"]
+    return res[0]["link"]
 
 
-# ================= DOWNLOAD HELPERS =================
+def extract_video_id(link: str):
+    if "v=" in link:
+        return link.split("v=")[-1].split("&")[0]
+    return link.rsplit("/", 1)[-1]
 
-async def download_song(link: str):
-    # 🔥 SONG NAME → YT LINK
+
+# ================= API STREAMING =================
+
+async def api_song_stream(link: str):
     if not link.startswith("http"):
         link = await search_to_link(link)
         if not link:
             return None
 
-    video_id = link.split("v=")[-1].split("&")[0]
-    os.makedirs("downloads", exist_ok=True)
+    vid = extract_video_id(link)
+    api = f"{API_URL}/song/{vid}?api={API_KEY}"
 
-    # Already exists
-    for ext in ["mp3", "m4a", "webm"]:
-        path = f"downloads/{video_id}.{ext}"
-        if os.path.exists(path):
-            return path
-
-    # ✅ API FIRST (unchanged behavior)
-    api_url = f"{API_URL}/song/{video_id}?api={API_KEY}"
     async with aiohttp.ClientSession() as session:
-        async with session.get(api_url) as r:
+        async with session.get(api) as r:
             if r.status != 200:
                 return None
             data = await r.json()
-            dl = data.get("link")
-            if not dl:
-                return None
-
-        async with session.get(dl) as f:
-            path = f"downloads/{video_id}.mp3"
-            with open(path, "wb") as w:
-                w.write(await f.read())
-            return path
+            return data.get("link")  # STREAM URL
 
 
-async def download_video(link: str):
+async def api_video_stream(link: str):
     if not link.startswith("http"):
         link = await search_to_link(link)
         if not link:
             return None
 
-    video_id = link.split("v=")[-1].split("&")[0]
-    os.makedirs("downloads", exist_ok=True)
+    vid = extract_video_id(link)
+    api = f"{VIDEO_API_URL}/video/{vid}?api={API_KEY}"
 
-    for ext in ["mp4", "webm", "mkv"]:
-        path = f"downloads/{video_id}.{ext}"
-        if os.path.exists(path):
-            return path
-
-    api_url = f"{VIDEO_API_URL}/video/{video_id}?api={API_KEY}"
     async with aiohttp.ClientSession() as session:
-        async with session.get(api_url) as r:
+        async with session.get(api) as r:
             if r.status != 200:
                 return None
             data = await r.json()
-            dl = data.get("link")
-            if not dl:
-                return None
-
-        async with session.get(dl) as f:
-            path = f"downloads/{video_id}.mp4"
-            with open(path, "wb") as w:
-                w.write(await f.read())
-            return path
+            return data.get("link")
 
 
-# ================= YOUTUBE CLASS =================
+# ================= YTDLP FALLBACK =================
+
+def ytdlp_stream(link: str, video=False):
+    cookie = cookie_txt_file()
+    opts = {
+        "format": "bestvideo+bestaudio" if video else "bestaudio/best",
+        "quiet": True,
+        "no_warnings": True,
+    }
+    if cookie:
+        opts["cookiefile"] = cookie
+
+    with yt_dlp.YoutubeDL(opts) as ydl:
+        info = ydl.extract_info(yt_query(link), download=False)
+        return info.get("url")
+
+
+# ================= YOUTUBE API CLASS =================
 
 class YouTubeAPI:
     def __init__(self):
@@ -147,28 +138,13 @@ class YouTubeAPI:
         )
 
     async def video(self, link: str, videoid=False):
-        file = await download_video(link)
-        if file:
-            return 1, file
+        # 🔥 API FIRST
+        stream = await api_video_stream(link)
+        if stream:
+            return 1, stream
 
-        cookie = cookie_txt_file()
-        opts = {"format": "best[height<=720]", "quiet": True}
-        if cookie:
-            opts["cookiefile"] = cookie
-
-        ydl = yt_dlp.YoutubeDL(opts)
-        info = ydl.extract_info(yt_query(link), download=False)
-        return 1, info["url"]
-
-    async def playlist(self, link, limit, user_id, videoid=False):
-        if not link.startswith("http"):
-            return []
-        cmd = f"yt-dlp -i --flat-playlist --get-id --playlist-end {limit} {link}"
-        proc = await asyncio.create_subprocess_shell(
-            cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        out, _ = await proc.communicate()
-        return [i for i in out.decode().split("\n") if i]
+        # 🔁 FALLBACK
+        return 1, ytdlp_stream(link, video=True)
 
     async def track(self, link: str, videoid=False):
         if not link.startswith("http"):
@@ -183,16 +159,23 @@ class YouTubeAPI:
             "thumb": res["thumbnails"][0]["url"].split("?")[0],
         }, res["id"]
 
-    async def download(self, link: str, mystic, video=False, videoid=False):
-        cookie = cookie_txt_file()
-        opts = {
-            "format": "bestaudio/best" if not video else "bestvideo+bestaudio",
-            "outtmpl": "downloads/%(id)s.%(ext)s",
-            "quiet": True,
-        }
-        if cookie:
-            opts["cookiefile"] = cookie
+    async def playlist(self, link, limit, user_id, videoid=False):
+        if not link.startswith("http"):
+            return []
+        cmd = f"yt-dlp -i --flat-playlist --get-id --playlist-end {limit} {link}"
+        proc = await asyncio.create_subprocess_shell(
+            cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        out, _ = await proc.communicate()
+        return [i for i in out.decode().split("\n") if i]
 
-        ydl = yt_dlp.YoutubeDL(opts)
-        info = ydl.extract_info(yt_query(link), download=True)
-        return f"downloads/{info['id']}.{info['ext']}"
+    async def download(self, link: str, mystic, video=False, videoid=False):
+        # 🔥 API STREAM FIRST
+        stream = await (api_video_stream(link) if video else api_song_stream(link))
+        if stream:
+            return stream
+
+        # 🔁 FALLBACK
+        return ytdlp_stream(link, video=video)
