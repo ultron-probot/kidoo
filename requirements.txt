@@ -22,8 +22,6 @@ spotipy
 tgcrypto
 unidecode
 yt-dlp>=2024.12.01
-youtube-search
-youtubesearchpython
 pyrogram==2.0.105   # ✅ emoji reaction compatible
 py-yt-search
 git+https://github.com/alexmercerind/youtube-search-python@main
